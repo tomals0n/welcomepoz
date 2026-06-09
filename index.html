@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POZ Ops</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- PHASE 1: SPLASH SCREEN -->
+    <div id="splash-screen">
+        <h1 class="welcome-text">WELCOME POZ</h1>
+        <div class="loader-container">
+            <div id="loader-bar"></div>
+            <div id="airplane-emoji">✈️</div>
+        </div>
+    </div>
+
+    <!-- PHASE 2: APP CONTAINER -->
+    <div id="app-container">
+        
+        <!-- MAIN DASHBOARD -->
+        <div id="view-main" class="view active">
+            <header class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight">POZ</h2>
+                </div>
+            </header>
+
+            <div class="bento-grid">
+                <!-- TILE 1: LINIE LOTNICZE -->
+                <div id="airlines-trigger" class="bento-card">
+                    <span class="card-icon">✈️</span>
+                    <h3 class="card-title">Linie lotnicze</h3>
+                </div>
+
+                <!-- TILE 2: PRM -->
+                <div id="prm-trigger" class="bento-card">
+                    <span class="card-icon">♿</span>
+                    <h3 class="card-title">PRM</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRM VIEW -->
+        <div id="view-prm" class="view">
+            <div class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            
+            <h2 class="text-2xl font-bold mb-4">Procedura PRM</h2>
+
+            <div class="sub-grid">
+                <div id="prm-manual-trigger" class="mini-card">
+                    <span>Wózek manualny</span>
+                </div>
+                <div id="prm-electric-trigger" class="mini-card">
+                    <span>Wózek elektryczny</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRM MANUAL VIEW -->
+        <div id="view-prm-manual" class="view">
+            <div class="back-button-prm">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-6">Procedura PRM - wózek manualny</h2>
+            <div class="space-y-4">
+                <div class="procedure-step">
+                    <span class="step-number">1</span>
+                    <span>Zweryfikuj kartę pokładową i dokument tożsamości.</span>
+                </div>
+                <div class="procedure-step">
+                    <span class="step-number">2</span>
+                    <span>Sprawdź kod SSR (np. WCHR, WCHS).</span>
+                </div>
+                <div class="procedure-step">
+                    <span class="step-number">3</span>
+                    <span>Nadaj zawieszkę "Limited Release" na wózek pasażera.</span>
+                </div>
+                <div class="procedure-step">
+                    <span class="step-number">4</span>
+                    <span>Poinformuj załogę o pasażerze PRM podczas boardingu.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRM ELECTRIC VIEW -->
+        <div id="view-prm-electric" class="view">
+            <div class="back-button-prm">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-6">Procedura PRM - wózek elektryczny</h2>
+            <div class="space-y-4">
+                <div class="procedure-step">
+                    <span class="step-number">1</span>
+                    <span>Pobierz dane o typie baterii (sucha/żelowa/litowa).</span>
+                </div>
+                <div class="procedure-step">
+                    <span class="step-number">2</span>
+                    <span>Zabezpiecz akumulatory przed zwarciem.</span>
+                </div>
+                <div class="procedure-step">
+                    <span class="step-number">3</span>
+                    <span>Wypełnij formularz deklaracji dla wózka elektrycznego.</span>
+                </div>
+                <div class="procedure-step">
+                    <span class="step-number">4</span>
+                    <span>Potwierdź możliwość przewozu z kapitanem rejsu.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- AIRLINES VIEW -->
+        <div id="view-airlines" class="view">
+            <div class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            
+            <h2 class="text-2xl font-bold mb-6">Linie lotnicze</h2>
+            
+            <div id="airline-list" class="airline-grid">
+                <div class="mini-card" data-airline="Ryanair">Ryanair</div>
+                <div class="mini-card" data-airline="Ryanair Sun">Ryanair Sun</div>
+                <div class="mini-card" data-airline="Alba Star">Alba Star</div>
+                <div class="mini-card" data-airline="Wizz Air">Wizz Air</div>
+                <div class="mini-card" data-airline="Enter Air">Enter Air</div>
+                <div class="mini-card" data-airline="Smartwings">Smartwings</div>
+                <div class="mini-card" data-airline="Skyline">Skyline</div>
+                <div class="mini-card" data-airline="Air Cairo">Air Cairo</div>
+                <div class="mini-card" data-airline="Omega">Omega</div>
+                <div class="mini-card" data-airline="Nesma">Nesma</div>
+                <div class="mini-card" data-airline="Sky UP">Sky UP</div>
+                <div class="mini-card" data-airline="Electra Airways">Electra Airways</div>
+                <div class="mini-card" data-airline="Sky Express">Sky Express</div>
+                <div class="mini-card" data-airline="Pegasus">Pegasus</div>
+                <div class="mini-card" data-airline="Nouvelair">Nouvelair</div>
+                <div class="mini-card" data-airline="Sun Express">Sun Express</div>
+            </div>
+        </div>
+
+        <!-- AIRLINE DETAIL VIEW -->
+        <div id="view-airline-detail" class="view">
+            <div class="back-button-airlines">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            <h2 id="detail-airline-name" class="text-2xl font-bold mb-6">Linia</h2>
+            
+            <div id="airline-info-container">
+                <!-- Info will be injected here -->
+            </div>
+        </div>
+
+        <!-- SSR DETAIL VIEW -->
+        <div id="view-ssr-detail" class="view">
+            <div id="back-button-ssr" class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-6">SSR</h2>
+            
+            <div class="space-y-3">
+                <div class="procedure-step flex justify-between items-center">
+                    <span class="font-bold text-pink-300">CBAG</span>
+                    <span class="text-sm">Bagaż 10kg</span>
+                </div>
+                <div class="procedure-step flex justify-between items-center">
+                    <span class="font-bold text-pink-300">BBG</span>
+                    <span class="text-sm">Bagaż 20kg</span>
+                </div>
+                <div class="procedure-step flex justify-between items-center">
+                    <span class="font-bold text-pink-300">PBAG</span>
+                    <span class="text-sm">Za duży bagaż podręczny (plecak) na Gate lub niewykupiona walizka</span>
+                </div>
+                <div class="procedure-step flex justify-between items-center">
+                    <span class="font-bold text-pink-300">GBAG</span>
+                    <span class="text-sm">Za duża walizka na Gate</span>
+                </div>
+                <div class="procedure-step flex justify-between items-center">
+                    <span class="font-bold text-pink-300">CABA</span>
+                    <span class="text-sm">PAX przyleciał z innego lotniska i płacił za nadwymiarowy bagaż</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

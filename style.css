@@ -1,0 +1,242 @@
+:root {
+    --bg-color: #050505;
+    --text-color: #ffffff;
+    --surface: #111111;
+    --amoled-black: #050505;
+    --cyan-accent: #00f2ff;
+    --amber-accent: #ffaa00;
+    --purple-accent: #bf00ff;
+    --pink-accent: #ffb6c1; /* Powder Pink */
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Space Grotesk', sans-serif;
+    margin: 0;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* --- Phase 1: Splash Screen --- */
+#splash-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--amoled-black);
+    transition: opacity 0.8s ease-out, visibility 0.8s;
+}
+
+.welcome-text {
+    font-family: 'Times New Roman', Times, serif;
+    font-style: italic;
+    font-size: clamp(2rem, 8vw, 6rem);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    color: white;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    margin-right: -0.2em;
+    text-align: center;
+}
+
+.loader-container {
+    width: min(300px, 80vw);
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    position: relative;
+    overflow: visible;
+}
+
+#loader-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, transparent, var(--pink-accent));
+    border-radius: 999px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-shadow: 0 0 15px var(--pink-accent);
+}
+
+#airplane-emoji {
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    transform: translate(-50%, -50%) rotate(90deg);
+    font-size: 1.5rem;
+    pointer-events: none;
+    filter: drop-shadow(0 0 5px var(--pink-accent));
+    z-index: 10;
+}
+
+/* --- Phase 2: Dashboard & Views --- */
+#app-container {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in;
+    padding: 1.5rem;
+    max-width: 600px; /* Phone optimized */
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.view {
+    display: none;
+    flex-direction: column;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.view.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.bento-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding-bottom: 2rem;
+}
+
+.bento-card {
+    background-color: var(--surface);
+    border: 1px solid var(--pink-accent);
+    box-shadow: 0 0 15px -5px var(--pink-accent);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.bento-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, var(--pink-accent), transparent 70%);
+    opacity: 0.1;
+}
+
+.bento-card:active {
+    transform: scale(0.96);
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.card-subtitle {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 0.25rem;
+}
+
+/* Sub-page Specific */
+.back-button {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.back-button:active {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(0.95);
+}
+
+.procedure-step {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.step-number {
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    background: var(--amber-accent);
+    color: black;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 0.75rem;
+}
+
+.info-banner {
+    background: rgba(255, 182, 193, 0.1);
+    border: 1px solid var(--pink-accent);
+    padding: 1rem;
+    border-radius: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 15px -5px var(--pink-accent);
+}
+
+.sub-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.airline-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.mini-card {
+    background: var(--surface);
+    border: 1px solid var(--pink-accent);
+    box-shadow: 0 0 10px -5px var(--pink-accent);
+    border-radius: 1rem;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+}
+
+.mini-card:active {
+    background: rgba(255, 182, 193, 0.1);
+    transform: scale(0.95);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--amoled-black); }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
