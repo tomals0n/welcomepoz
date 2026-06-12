@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (airline === 'Ryanair' || airline === 'Ryanair Sun') {
             airlineInfoContainer.innerHTML = `
                 <div class="info-banner">
-                    <p class="font-bold mb-2">Operational Times (ETD):</p>
+                    <p class="font-bold mb-2">ETD:</p>
                     <ul class="space-y-2 text-sm">
                         <li>• Check-in opens: <span class="text-pink-300">2h before</span></li>
                         <li>• Check-in closes: <span class="text-pink-300">40 min before</span></li>
