@@ -31,6 +31,17 @@ body {
     transition: opacity 0.8s ease-out, visibility 0.8s;
 }
 
+#splash-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('img/background.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.04; /* Krycie obrazu, aby prześwitywało czarne tło */
+    z-index: -1;
+}
+
 .welcome-text {
     font-family: 'Times New Roman', Times, serif;
     font-style: italic;
@@ -57,7 +68,7 @@ body {
 #loader-bar {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, transparent, var(--pink-accent));
+    background-color: var(--pink-accent); /* Stały kolor zamiast gradientu */
     border-radius: 999px;
     position: absolute;
     top: 0;
