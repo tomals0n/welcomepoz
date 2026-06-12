@@ -18,8 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const airlineInfoContainer = document.getElementById('airline-info-container');
     const backButtonSsr = document.getElementById('back-button-ssr');
     const ssrContainer = document.getElementById('ssr-container');
+    const backButtonTopic = document.getElementById('back-button-topic');
+    const topicTitle = document.getElementById('topic-title');
+    const topicContent = document.getElementById('topic-content');
 
     let currentAirline = '';
+    let currentTopic = '';
 
     // --- Dane kodów SSR ---
     const ssrCodes = [
@@ -213,12 +217,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Dane dla operational times
     const operationalData = [
-        { type: 'info', title: 'Check-in opens', desc: '2h before' },
-        { type: 'info', title: 'Check-in closes', desc: '40 min before' },
-        { type: 'info', title: 'Boarding starts', desc: '50-51 min before (15 PS)' },
-        { type: 'info', title: 'Boarding closes', desc: '15 min before' }
+        { title: 'Check-in opens', desc: '2h ETD' },
+        { title: 'Check-in closes', desc: '40 min ETD' },
+        { title: 'Boarding starts', desc: '50-51 min ETD', note: 'skanujemy pierwsze 15 osób z priorytetem jeśli na rejsie jest więcej niż 30 osób z PS' },
+        { title: 'Boarding closes', desc: '15 min ETD' }
+    ];
+
+    const ryanairTiles = [
+        { action: 'topic', topic: 'TARYFY', label: 'TARYFY' },
+        { action: 'topic', topic: 'ILE NA REJS', label: 'ILE NA REJS' },
+        { action: 'topic', topic: 'OVERBOOKING', label: 'OVERBOOKING' },
+        { action: 'topic', topic: 'EMEX', label: 'EMEX' },
+        { action: 'topic', topic: 'EXTRA SEAT', label: 'EXTRA SEAT' },
+        { action: 'topic', topic: 'KOBIETY W CIĄŻY', label: 'KOBIETY W CIĄŻY' },
+        { action: 'topic', topic: 'ODWOŁANIE', label: 'ODWOŁANIE' },
+        { action: 'topic', topic: 'LRB', label: 'LRB' },
+        { action: 'topic', topic: 'PIES ASYSTUJĄCY', label: 'PIES ASYSTUJĄCY' },
+        { action: 'ssr', label: 'SSR' }
     ];
 
     function showAirlineDetail(airline) {
@@ -226,40 +242,32 @@ document.addEventListener('DOMContentLoaded', () => {
         airlineDetailName.textContent = airline;
         airlineInfoContainer.innerHTML = '';
 
-        if (airline === 'Ryanair' || airline === 'Ryanair Sun') {
+        if (airline === 'Ryanair') {
             airlineInfoContainer.innerHTML = `
                 <div class="mb-4">
-                    <input type="text" id="search-input" placeholder="Wyszukiwarka" 
+                    <input type="text" id="search-input" placeholder="Wyszukiwarka"
                            class="w-full p-3 bg-white/10 border border-pink-300/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-pink-300">
                 </div>
                 <div id="search-results"></div>
+                <div id="ryanair-tiles" class="airline-grid mt-4"></div>
             `;
-            
-            if (airline === 'Ryanair') {
-                airlineInfoContainer.innerHTML += `
-                    <div id="ssr-trigger" class="mini-card mt-4">
-                        <span class="font-bold">Kody SSR</span>
-                    </div>
-                `;
-                
-                // Dodaj listener dla wyszukiwania
-                setTimeout(() => {
-                    const searchInput = document.getElementById('search-input');
-                    if (searchInput) {
-                        searchInput.addEventListener('input', (e) => {
-                            renderSearchResults(e.target.value);
-                        });
-                        // Wygeneruj domyślne wyniki
-                        renderSearchResults('');
-                    }
-                }, 0);
-            } else {
-                // Dla Ryanair Sun tylko pokaż banner bez wyszukiwania
-                renderOperationalBanner();
-            }
+
+            setTimeout(() => {
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        renderSearchResults(e.target.value);
+                    });
+                }
+                renderSearchResults('');
+                renderRyanairTiles('');
+            }, 0);
+        } else if (airline === 'Ryanair Sun') {
+            airlineInfoContainer.innerHTML = `<div id="search-results"></div>`;
+            renderOperationalBanner();
         } else if (airline === 'Wizz Air') {
             airlineInfoContainer.innerHTML = `
-                <div id="ssr-trigger" class="mini-card">
+                <div class="mini-card" data-action="ssr">
                     <span class="font-bold">Kody SSR</span>
                 </div>
                 <div class="procedure-step text-center mt-4">
@@ -274,15 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Add event listener for dynamic SSR trigger
-        const ssrTriggerBtn = document.getElementById('ssr-trigger');
-        if (ssrTriggerBtn) {
-            ssrTriggerBtn.addEventListener('click', () => {
-                renderSSRCodes(''); // Zresetuj filtrowanie
-                showView('view-ssr');
-            });
-        }
-
         showView('view-airline-detail');
     }
 
@@ -294,12 +293,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="font-bold mb-2">ETD:</p>
                     <ul class="space-y-2 text-sm">
                         ${operationalData.map(item => `
-                            <li>• ${item.title}: <span class="text-pink-300">${item.desc}</span></li>
+                            <li>
+                                <div>• ${item.title}: <span class="text-pink-300">${item.desc}</span></div>
+                                ${item.note ? `<div class="text-xs text-white/60 mt-1 leading-snug">(${item.note})</div>` : ''}
+                            </li>
                         `).join('')}
                     </ul>
                 </div>
             `;
         }
+    }
+
+    function renderRyanairTiles(filter = '') {
+        const container = document.getElementById('ryanair-tiles');
+        if (!container) return;
+
+        const q = filter.trim().toLowerCase();
+        const tiles = q
+            ? ryanairTiles.filter(t => (t.label || '').toLowerCase().includes(q))
+            : ryanairTiles;
+
+        container.innerHTML = tiles.map(t => {
+            const dataTopic = t.topic ? ` data-topic="${t.topic}"` : '';
+            return `<div class="mini-card" data-action="${t.action}"${dataTopic}>${t.label}</div>`;
+        }).join('');
+    }
+
+    function openTopic(topic) {
+        currentTopic = topic;
+        topicTitle.textContent = topic;
+        topicContent.innerHTML = `
+            <div class="procedure-step text-center py-10">
+                <p class="text-white/40 italic">Treść w przygotowaniu.</p>
+            </div>
+        `;
+        showView('view-topic');
     }
 
     function renderSearchResults(filter = '') {
@@ -320,11 +348,16 @@ document.addEventListener('DOMContentLoaded', () => {
             item.desc.toLowerCase().includes(lowerFilter)
         );
 
+        const filteredTiles = ryanairTiles.filter(t =>
+            (t.label || '').toLowerCase().includes(lowerFilter)
+        );
+
         let html = '';
 
         // Jeśli filtr pusty, pokaż banner
         if (!filter) {
             renderOperationalBanner();
+            renderRyanairTiles('');
             return;
         }
 
@@ -335,9 +368,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="font-bold mb-2">Operational Times (ETD):</p>
                     <ul class="space-y-2 text-sm">
                         ${filteredOperational.map(item => `
-                            <li>• ${item.title}: <span class="text-pink-300">${item.desc}</span></li>
+                            <li>
+                                <div>• ${item.title}: <span class="text-pink-300">${item.desc}</span></div>
+                                ${item.note ? `<div class="text-xs text-white/60 mt-1 leading-snug">(${item.note})</div>` : ''}
+                            </li>
                         `).join('')}
                     </ul>
+                </div>
+            `;
+        }
+
+        if (filteredTiles.length > 0) {
+            html += `
+                <p class="font-bold mb-2">Kafelki:</p>
+                <div class="airline-grid mb-4">
+                    ${filteredTiles.map(t => {
+                        const dataTopic = t.topic ? ` data-topic="${t.topic}"` : '';
+                        return `<div class="mini-card" data-action="${t.action}"${dataTopic}>${t.label}</div>`;
+                    }).join('')}
                 </div>
             `;
         }
@@ -365,13 +413,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         container.innerHTML = html;
+        renderRyanairTiles(filter);
     }
+
+    airlineInfoContainer.addEventListener('click', (e) => {
+        const tile = e.target.closest('[data-action]');
+        if (!tile) return;
+
+        const action = tile.getAttribute('data-action');
+        if (action === 'ssr') {
+            renderSSRCodes('');
+            showView('view-ssr');
+            return;
+        }
+
+        if (action === 'topic') {
+            const topic = tile.getAttribute('data-topic');
+            if (topic) openTopic(topic);
+        }
+    });
 
     // Back Navigation
     backButtons.forEach(btn => btn.addEventListener('click', () => showView('view-main')));
     backButtonsPrm.forEach(btn => btn.addEventListener('click', () => showView('view-prm')));
     backButtonsAirlines.forEach(btn => btn.addEventListener('click', () => showView('view-airlines')));
     backButtonSsr.addEventListener('click', () => showAirlineDetail(currentAirline));
+    backButtonTopic.addEventListener('click', () => showAirlineDetail(currentAirline));
 
     window.addEventListener('popstate', () => showView('view-main'));
 });
