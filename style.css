@@ -37,8 +37,9 @@ body {
     inset: 0;
     background-image: url('img/background.jpg');
     background-size: cover;
-    background-position: center;
-    opacity: 0.04; /* Krycie obrazu, aby prześwitywało czarne tło */
+    background-position: top center; /* Przesuwamy, aby pokazać samolot na niebie */
+    background-repeat: no-repeat;
+    opacity: 0.2; /* Krycie obrazu, aby lepiej widać samolot */
     z-index: -1;
 }
 
@@ -73,17 +74,15 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    box-shadow: 0 0 15px var(--pink-accent);
 }
 
 #airplane-emoji {
     position: absolute;
     top: 50%;
     left: 0%;
-    transform: translate(-50%, -50%) rotate(90deg);
+    transform: translate(-50%, -50%);
     font-size: 1.5rem;
     pointer-events: none;
-    filter: drop-shadow(0 0 5px var(--pink-accent));
     z-index: 10;
 }
 
@@ -189,6 +188,7 @@ body {
     padding: 1rem;
     margin-bottom: 0.75rem;
     border: 1px solid rgba(255, 255, 255, 0.05);
+    line-height: 1.5;
 }
 
 .step-number {
