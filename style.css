@@ -27,7 +27,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: var(--amoled-black);
+    background: linear-gradient(135deg, #050505 0%, #1a1a2e 50%, #050505 100%);
     transition: opacity 0.8s ease-out, visibility 0.8s;
 }
 
@@ -35,54 +35,120 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: url('img/background.jpg');
-    background-size: cover;
-    background-position: top center; /* Przesuwamy, aby pokazać samolot na niebie */
-    background-repeat: no-repeat;
-    opacity: 0.2; /* Krycie obrazu, aby lepiej widać samolot */
-    z-index: -1;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 182, 193, 0.1) 0%, transparent 60%);
+    animation: glow 3s ease-in-out infinite;
 }
 
-.welcome-text {
-    font-family: 'Times New Roman', Times, serif;
-    font-style: italic;
-    font-size: clamp(2rem, 8vw, 6rem);
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-    color: white;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-    text-align: center;
+@keyframes glow {
+    0%, 100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.splash-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.logo-wrapper {
+    position: relative;
+    padding: 1.5rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.company-logo {
+    max-width: 280px;
+    width: 80vw;
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(186, 46, 106, 0.6));
+    animation: logoPulse 2s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 20px rgba(186, 46, 106, 0.6));
+    }
+    50% {
+        filter: drop-shadow(0 0 40px rgba(186, 46, 106, 0.8));
+    }
 }
 
 .loader-container {
-    width: min(300px, 80vw);
+    width: min(300px, 75vw);
     height: 6px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 999px;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 #loader-bar {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #ffccd5, #ff85a2); /* Różowy gradient od jasnego do ciemniejszego */
+    background: linear-gradient(90deg, #2d1b69 0%, #ba2e6a 50%, #ffb6c1 100%);
     border-radius: 999px;
     position: absolute;
     top: 0;
     left: 0;
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 20px rgba(186, 46, 106, 0.6);
 }
 
-#airplane-emoji {
+#loader-bar::after {
+    content: '';
     position: absolute;
-    top: 50%;
-    left: 0%;
-    transform: translate(-50%, -50%);
-    font-size: 1.5rem;
-    pointer-events: none;
-    z-index: 10;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shine 2s infinite;
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.loading-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    margin: 0;
+    animation: fadeInOut 2s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
 }
 
 /* --- Phase 2: Dashboard & Views --- */

@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const splash = document.getElementById('splash-screen');
     const appContainer = document.getElementById('app-container');
     const loaderBar = document.getElementById('loader-bar');
-    const airplane = document.getElementById('airplane-emoji');
     const views = document.querySelectorAll('.view');
     const backButtons = document.querySelectorAll('.back-button');
     const backButtonsPrm = document.querySelectorAll('.back-button-prm');
@@ -152,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const percentage = progress * 100;
         loaderBar.style.width = `${percentage}%`;
-        airplane.style.left = `${percentage}%`;
 
         if (progress < 1) {
             requestAnimationFrame(animateSplash);
