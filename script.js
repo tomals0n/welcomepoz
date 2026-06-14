@@ -320,11 +320,191 @@ document.addEventListener('DOMContentLoaded', () => {
     function openTopic(topic) {
         currentTopic = topic;
         topicTitle.textContent = topic;
-        topicContent.innerHTML = `
-            <div class="procedure-step text-center py-10">
-                <p class="text-white/40 italic">Treść w przygotowaniu.</p>
-            </div>
-        `;
+        
+        if (topic === 'OVERBOOKING') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">Postępowanie w przypadku overbookingu</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Kto musi lecieć?</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>PRM</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Rodziny z dziećmi na jednej rezerwacji</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Rezerwacje grupowe</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Pasażerowie z wykupionym miejscem</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Pasażerowie na powrotnej rezerwacji</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Sprawdzamy w check in → advanced → wpisujemy cały numer rezerwacji → zaznaczamy coś tam nie pamiętam co tam jest napisane</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>Przed rozpoczęciem odprawy (check-in)</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-subsection">
+                                <div class="accordion-subtitle">W przypadku, gdy liczba odprawionych pasażerów przekracza liczbę dostępnych miejsc w samolocie:</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Sprawdzamy, ilu pasażerów nie ma przydzielonego miejsca w samolocie.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Weryfikujemy, którzy pasażerowie odprawili się jako ostatni (numer sequence).</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Ustalamy, czy dany pasażer musi podróżować (kto może lecieć, a kto nie).</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Sprawdzamy najbliższe dostępne połączenia alternatywne (w razie potrzeby można skonsultować się z PPO).</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Przygotowujemy informacje dotyczące praw pasażera w przypadku odmowy przyjęcia na pokład.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="3">
+                        <span>Podczas odprawy (check-in)</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Ogłaszamy overbooking (podczas odprawy najlepiej 2-3 razy).</div>
+                            </div>
+                            <div class="accordion-subsection">
+                                <div class="accordion-subtitle">Jeśli istnieje ryzyko, że pasażer nie poleci, a nadaje bagaż rejestrowany:</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Informujemy pasażera o zaistniałej sytuacji.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Do przywieszki bagażowej doklejamy oznaczenie "STANDBY".</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Zgłaszamy do sortowni informację o bagażu "STANDBY".</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="4">
+                        <span>Podczas boardingu</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Pasażerów bez miejsca zgłaszających się podczas boardingu informujemy o overbookingu i prosimy o oczekiwanie do zakończenia boardingu.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Czekamy do końca boardingu, aby upewnić się, że wszyscy pasażerowie mieli możliwość zgłoszenia się do wejścia na pokład.</div>
+                            </div>
+                            <div class="accordion-subsection">
+                                <div class="accordion-subtitle">Jeśli wszyscy pasażerowie z listy przyszli do gate:</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Przed zamknięciem systemu weryfikujemy na pokładzie, czy wszystkie miejsca są faktycznie zajęte.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Jeśli któreś miejsce pozostaje wolne, potwierdzamy, że przypisany do niego pasażer nie znajduje się na pokładzie.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Wolne miejsca przydzielamy pasażerom zgodnie z kolejnością na liście oczekujących (numer sequence odprawy).</div>
+                            </div>
+                            <div class="accordion-subsection">
+                                <div class="accordion-subtitle">Pasażerów, którzy nie zostali przyjęci na pokład:</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Kierujemy do PPO w celu przebukowania na najbliższy dostępny rejs.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>W miarę możliwości osobiście odprowadzamy pasażera lub przekazujemy osobie w PPO informację ile osób i kto przyjdzie.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Dbamy o to, aby pasażer czuł się odpowiednio zaopiekowany i otrzymał niezbędne wsparcie oraz informacje dotyczące dalszej podróży.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Zamykamy system i przekazujemy rampie informację o ilości pasażerów na pokładzie.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+
+        } else {
+            topicContent.innerHTML = `
+                <div class="procedure-step text-center py-10">
+                    <p class="text-white/40 italic">Treść w przygotowaniu.</p>
+                </div>
+            `;
+        }
+        
         showView('view-topic');
     }
 
