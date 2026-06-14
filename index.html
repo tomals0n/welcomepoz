@@ -10,8 +10,38 @@
 </head>
 <body>
 
+    <!-- PHASE 0: PIN SCREEN -->
+    <div id="pin-screen">
+        <div class="pin-card">
+            <p class="pin-subtitle-top">AUTORYZACJA</p>
+            <h2 class="pin-title">Wprowadź kod PIN</h2>
+            <p class="pin-subtitle">Aby przejść do systemu, wpisz 4-cyfrowy kod dostępu.</p>
+            
+            <div class="pin-field-wrapper">
+                <label class="pin-field-label">KOD PIN</label>
+                <div class="pin-field-container">
+                    <input type="password" id="pin-main-input" maxlength="4" class="pin-main-input" placeholder="••••">
+                    <div class="pin-dots">
+                        <span class="pin-dot"></span>
+                        <span class="pin-dot"></span>
+                        <span class="pin-dot"></span>
+                        <span class="pin-dot"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <p id="pin-error" class="pin-error hidden">Błędny kod PIN</p>
+            
+            <div class="pin-buttons">
+                <button id="pin-submit" class="pin-button pin-button-primary">
+                    WEJDŹ DO SYSTEMU
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- PHASE 1: SPLASH SCREEN -->
-    <div id="splash-screen">
+    <div id="splash-screen" style="opacity: 0; visibility: hidden;">
         <div class="splash-content">
             <div class="logo-wrapper">
                 <img src="img/welcome_favicon.png" alt="Welcome Airport Services" class="company-logo">
@@ -41,12 +71,33 @@
                     <h3 class="card-title">Linie lotnicze</h3>
                 </div>
 
-                <!-- TILE 2: PRM -->
+                <!-- TILE 2: DOKUMENTY WJAZDOWE -->
+                <div id="docs-trigger" class="bento-card">
+                    <span class="card-icon">📄</span>
+                    <h3 class="card-title">Dokumenty wjazdowe</h3>
+                </div>
+
+                <!-- TILE 3: PRM -->
                 <div id="prm-trigger" class="bento-card">
                     <span class="card-icon">♿</span>
                     <h3 class="card-title">PRM</h3>
                 </div>
             </div>
+        </div>
+
+        <!-- DOKUMENTY WJAZDOWE VIEW -->
+        <div id="view-docs" class="view">
+            <div class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            
+            <h2 class="text-2xl font-bold mb-4">Dokumenty wjazdowe</h2>
+            
+            <div class="mb-4">
+                <input type="text" id="docs-search-input" placeholder="Szukaj kraju" class="w-full p-3 bg-white/10 border border-pink-300/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-pink-300">
+            </div>
+            
+            <div id="docs-content"></div>
         </div>
 
         <!-- PRM VIEW -->

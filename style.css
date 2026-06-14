@@ -19,6 +19,209 @@ body {
     min-height: 100vh;
 }
 
+/* --- Phase 0: PIN Screen --- */
+#pin-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    transition: opacity 0.8s ease-out, visibility 0.8s;
+}
+
+#pin-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 182, 193, 0.1) 0%, transparent 60%);
+    animation: glow 3s ease-in-out infinite;
+}
+
+.pin-card {
+    position: relative;
+    z-index: 1;
+    background: #111111;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    width: 90%;
+    max-width: 400px;
+    overflow: hidden;
+}
+
+.pin-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1.5rem;
+    padding: 1px;
+    background: linear-gradient(135deg, #2d1b69 0%, #ba2e6a 50%, #ffb6c1 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.pin-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pin-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.pin-subtitle-top {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 182, 193, 0.8);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.pin-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.75rem;
+}
+
+.pin-subtitle {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 1.5rem;
+}
+
+.pin-field-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.pin-field-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.pin-field-container {
+    position: relative;
+}
+
+.pin-main-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 999px;
+    border: none;
+    color: transparent;
+    caret-color: transparent;
+    font-size: 1rem;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.pin-field-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    padding: 1px;
+    background: linear-gradient(135deg, #2d1b69 0%, #ba2e6a 50%, #ffb6c1 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.pin-dots {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    pointer-events: none;
+}
+
+.pin-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.2s;
+}
+
+.pin-dot.filled {
+    background: linear-gradient(135deg, #ba2e6a 0%, #ffb6c1 100%);
+    box-shadow: 0 0 10px rgba(186, 46, 106, 0.5);
+}
+
+.pin-error {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.pin-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+.pin-button {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    padding: 0.9rem 1.25rem;
+    border-radius: 1.25rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.04);
+    color: white;
+}
+
+.pin-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1.25rem;
+    padding: 1px;
+    background: linear-gradient(135deg, #2d1b69 0%, #ba2e6a 50%, #ffb6c1 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.pin-button:active {
+    transform: translateY(3px) scale(0.98);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.hidden {
+    display: none !important;
+}
+
 /* --- Phase 1: Splash Screen --- */
 #splash-screen {
     position: fixed;
@@ -242,7 +445,11 @@ body {
 }
 
 /* Sub-page Specific */
-.back-button {
+.back-button,
+.back-button-prm,
+.back-button-airlines,
+#back-button-ssr,
+#back-button-topic {
     position: relative;
     width: 44px;
     height: 44px;
@@ -257,7 +464,11 @@ body {
     overflow: hidden;
 }
 
-.back-button::before {
+.back-button::before,
+.back-button-prm::before,
+.back-button-airlines::before,
+#back-button-ssr::before,
+#back-button-topic::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -270,7 +481,11 @@ body {
     pointer-events: none;
 }
 
-.back-button:active {
+.back-button:active,
+.back-button-prm:active,
+.back-button-airlines:active,
+#back-button-ssr:active,
+#back-button-topic:active {
     background: rgba(255, 255, 255, 0.08);
     transform: scale(0.95);
 }
