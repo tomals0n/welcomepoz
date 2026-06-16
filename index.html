@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>POZ Ops</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -65,9 +66,16 @@
                 <div>
                     <img src="img/welcome_favicon.png" alt="Welcome Airport Services" class="header-logo">
                 </div>
+                <div id="logged-in-info" class="text-right text-sm text-white/80"></div>
             </header>
 
             <div class="bento-grid">
+                <!-- TILE 0: DNIÓWKA LOTÓW -->
+                <div id="dniowka-trigger" class="bento-card">
+                    <span class="card-icon">📅</span>
+                    <h3 class="card-title">Dniówka</h3>
+                </div>
+                
                 <!-- TILE 1: LINIE LOTNICZE -->
                 <div id="airlines-trigger" class="bento-card">
                     <span class="card-icon">✈️</span>
@@ -103,6 +111,30 @@
             <div id="docs-content"></div>
         </div>
 
+        <!-- DNIÓWKA LOTÓW VIEW -->
+        <div id="view-dniowka" class="view">
+            <div class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            
+            <h2 class="text-2xl font-bold mb-4">Dniówka lotów</h2>
+            
+            <!-- Tabs: Wszystkie / Moje loty -->
+            <div class="flex gap-2 mb-4">
+                <button id="tab-all" class="tab-button active flex-1">Wszystkie loty</button>
+                <button id="tab-mine" class="tab-button flex-1">Moje loty</button>
+            </div>
+            
+            <!-- Top info section -->
+            <div id="dniowka-top-info" class="info-banner mb-4"></div>
+            
+            <!-- Upload section for Lider/Kierownik -->
+            <div id="dniowka-upload" class="info-banner mb-4"></div>
+            
+            <!-- Flight list -->
+            <div id="flight-list"></div>
+        </div>
+        
         <!-- PRM VIEW -->
         <div id="view-prm" class="view">
             <div class="back-button">

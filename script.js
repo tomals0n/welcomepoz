@@ -26,12 +26,32 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentAirline = '';
     let currentTopic = '';
     
+    // --- USER DATABASE ---
+    const users = [
+        { pin: '5559', name: 'Jan Kowalski', role: 'Lider' },
+        { pin: '1234', name: 'Anna Nowak', role: 'Kierownik' },
+        { pin: '9876', name: 'Piotr Wiśniewski', role: 'Agent Lotniskowy' },
+        { pin: '4321', name: 'Maria Wójcik', role: 'Agent Lotniskowy' },
+        { pin: '5678', name: 'Krzysztof Kaczmarek', role: 'Lider' },
+        { pin: '8765', name: 'Magdalena Zielińska', role: 'Kierownik' },
+        { pin: '4557', name: 'Aleksandra Skwarek', role: 'Agent Lotniskowy'}
+    ];
+    
+    let currentUser = null; // Will store the logged-in user object
+    
+    // --- DNIÓWKA DATA ---
+    let currentDniowkaData = null; // { date: string, topInfo: {}, flights: [] }
+    let dniowkaStorage = {}; // key: "DD-MMM-YYYY", value: dniowkaData
+    let currentDateSelection = 'today';
+    let currentTab = 'all';
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const monthsPL = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
+
     // PIN handling
     const pinMainInput = document.getElementById('pin-main-input');
     const pinDots = document.querySelectorAll('.pin-dot');
     const pinSubmit = document.getElementById('pin-submit');
     const pinError = document.getElementById('pin-error');
-    const CORRECT_PIN = '5559';
     
     // Variables for splash animation (resetable)
     let duration;
@@ -93,8 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function checkPin() {
         const enteredPin = pinMainInput.value;
         if (enteredPin.length === 4) {
-            if (enteredPin === CORRECT_PIN) {
-                // Correct PIN - show splash screen
+            const user = users.find(u => u.pin === enteredPin);
+            if (user) {
+                // Correct PIN - log user in!
+                currentUser = user;
                 pinError.classList.add('hidden');
                 pinScreen.style.opacity = '0';
                 pinScreen.style.visibility = 'hidden';
@@ -275,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 appContainer.style.visibility = 'visible';
                 appContainer.style.opacity = '1';
+                showLoggedInUser();
                 
                 setTimeout(() => {
                     splash.remove();
@@ -367,7 +390,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Load stored dniówka data
+    const savedStorage = localStorage.getItem('dniowkaStorage');
+    if (savedStorage) {
+        dniowkaStorage = JSON.parse(savedStorage);
+    }
+    
     // Main Triggers
+    const dniowkaTrigger = document.getElementById('dniowka-trigger');
+    if (dniowkaTrigger) {
+        dniowkaTrigger.addEventListener('click', showDniowkaView);
+    }
     docsTrigger.addEventListener('click', () => {
         showView('view-docs');
         renderDocs();
@@ -1134,6 +1167,326 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         showView('view-topic');
+    }
+
+    // --- Dniówka logic ---
+    function formatDateKey(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    }
+
+    function getDate(offsetDays) {
+        const date = new Date();
+        date.setDate(date.getDate() + offsetDays);
+        return date;
+    }
+
+    function showLoggedInUser() {
+        const infoDiv = document.getElementById('logged-in-info');
+        if (infoDiv && currentUser) {
+            const shortName = currentUser.name.split(' ')[0] + ' ' + currentUser.name.split(' ')[1].charAt(0) + '.';
+            infoDiv.innerHTML = `Zalogowany jako: <strong>${shortName}</strong> (${currentUser.role})`;
+        }
+    }
+
+    function showDniowkaView() {
+        showView('view-dniowka');
+        
+        // Try to load the saved dniówka for current selected date
+        const selectedDate = currentDateSelection === 'today' ? getDate(0) : getDate(1);
+        const dateKey = formatDateKey(selectedDate);
+        if (dniowkaStorage[dateKey]) {
+            currentDniowkaData = dniowkaStorage[dateKey];
+        }
+        
+        renderTopInfo();
+        renderUploadSection();
+        renderFlightList();
+        setupTabListeners();
+    }
+
+    function renderTopInfo() {
+        const container = document.getElementById('dniowka-top-info');
+        if (!container) return;
+
+        if (currentDniowkaData && currentDniowkaData.topInfo) {
+            let html = '';
+            if (currentDniowkaData.topInfo.coordinator || currentDniowkaData.topInfo.phone) {
+                html += `<div>Koordynator CKI ${currentDniowkaData.topInfo.coordinator || ''} ${currentDniowkaData.topInfo.phone ? 'Tel: ' + currentDniowkaData.topInfo.phone : ''}</div>`;
+            }
+            if (currentDniowkaData.topInfo.kuwety) {
+                html += `<div>KUWETY: ${currentDniowkaData.topInfo.kuwety}</div>`;
+            }
+            if (currentDniowkaData.topInfo.ppo) {
+                html += `<div>${currentDniowkaData.topInfo.ppo}</div>`;
+            }
+            
+            if (html !== '') {
+                container.innerHTML = `<div class="text-sm space-y-1">${html}</div>`;
+                container.classList.remove('hidden');
+            } else {
+                container.innerHTML = `<div class="text-center text-white/60">Brak wczytanej dniówki.</div>`;
+            }
+        } else {
+            container.innerHTML = `<div class="text-center text-white/60">Brak wczytanej dniówki.</div>`;
+        }
+    }
+
+    function renderUploadSection() {
+        const container = document.getElementById('dniowka-upload');
+        if (!container) return;
+
+        if (currentUser && (currentUser.role === 'Lider' || currentUser.role === 'Kierownik')) {
+            container.style.display = 'block';
+            container.innerHTML = `
+                <div class="file-upload-container">
+                    <div class="text-sm font-bold mb-2">Wybierz datę:</div>
+                    <div class="date-selector">
+                        <button class="date-btn ${currentDateSelection === 'today' ? 'active' : ''}" data-date="today">Dzisiaj</button>
+                        <button class="date-btn ${currentDateSelection === 'tomorrow' ? 'active' : ''}" data-date="tomorrow">Jutro</button>
+                    </div>
+                    <input type="file" id="excel-upload" accept=".xlsx,.xls" style="display:none;">
+                    <label for="excel-upload" class="file-upload-label">Wgraj plik Excel</label>
+                    ${currentDniowkaData ? `
+                        <button id="delete-dniowka" class="file-upload-label" style="background: rgba(255,0,0,0.2); border-image: linear-gradient(135deg, #ff4444, #ff6666) 1;">Usuń dniówkę</button>
+                    ` : ''}
+                </div>
+            `;
+            
+            // Add listeners
+            document.querySelectorAll('.date-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentDateSelection = btn.dataset.date;
+                    const selectedDate = currentDateSelection === 'today' ? getDate(0) : getDate(1);
+                    const key = formatDateKey(selectedDate);
+                    if (dniowkaStorage[key]) {
+                        currentDniowkaData = dniowkaStorage[key];
+                    } else {
+                        currentDniowkaData = null;
+                    }
+                    renderUploadSection();
+                    renderTopInfo();
+                    renderFlightList();
+                });
+            });
+            
+            document.getElementById('excel-upload').addEventListener('change', handleExcelUpload);
+            
+            if (document.getElementById('delete-dniowka')) {
+                document.getElementById('delete-dniowka').addEventListener('click', () => {
+                    const selectedDate = currentDateSelection === 'today' ? getDate(0) : getDate(1);
+                    const key = formatDateKey(selectedDate);
+                    delete dniowkaStorage[key];
+                    currentDniowkaData = null;
+                    renderUploadSection();
+                    renderTopInfo();
+                    renderFlightList();
+                });
+            }
+        } else {
+            container.innerHTML = '';
+            container.style.display = 'none';
+        }
+    }
+
+    function handleExcelUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                parseDniowkaData(jsonData);
+                
+                // Show success
+                alert('Dniówka wczytana pomyślnie!');
+                
+                renderTopInfo();
+                renderFlightList();
+                renderUploadSection();
+            } catch (err) {
+                console.error(err);
+                alert('Błąd podczas wczytywania pliku!');
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function parseDniowkaData(jsonData) {
+        // First, let's try to extract top info from the first few rows
+        let topInfo = {};
+        let flightsStartIndex = 0;
+        let topInfoRows = [];
+        
+        // Let's scan the data for the top info
+        for (let i = 0; i < Math.min(15, jsonData.length); i++) {
+            const row = jsonData[i];
+            const rowStr = ((row || []).join(' ') || '').toLowerCase();
+            const fullRowText = (row || []).join(' ') || '';
+            
+            if (fullRowText && fullRowText.trim() !== '') {
+                topInfoRows.push(fullRowText.trim());
+            }
+            
+            // Look for the header row that has "REJS" or "KIERUNEK" or "GODZ WYLOTU"
+            if (rowStr.includes('rejs') || rowStr.includes('kierunek') || rowStr.includes('godz wylotu')) {
+                flightsStartIndex = i + 1;
+                break;
+            }
+        }
+        
+        // Now parse the top info rows exactly like your screenshot
+        topInfo.coordinator = '';
+        topInfo.phone = '';
+        topInfo.kuwety = '';
+        topInfo.ppo = '';
+        
+        topInfoRows.forEach(rowText => {
+            if (!rowText) return;
+            
+            if (rowText.toLowerCase().includes('koordynator cki')) {
+                // Split on "Tel:" to get coordinator and phone
+                if (rowText.toLowerCase().includes('tel:')) {
+                    const parts = rowText.split(/Tel\./i);
+                    topInfo.coordinator = (parts[0] || '').replace(/Koordynator CKI/i, '').trim();
+                    topInfo.phone = (parts[1] || '').trim();
+                } else {
+                    topInfo.coordinator = (rowText || '').replace(/Koordynator CKI/i, '').trim();
+                }
+            } else if (rowText.toLowerCase().includes('kuwety:')) {
+                topInfo.kuwety = (rowText || '').replace(/KUWETY:/i, '').trim();
+            } else if (rowText.toLowerCase().includes('ppo')) {
+                topInfo.ppo = (rowText || '').replace(/PPO/i, '').trim();
+            }
+        });
+        
+        topInfo.date = new Date().toLocaleDateString('pl-PL');
+        
+        // Now parse flights with your EXACT column order:
+        // REJS, KIERUNEK, GODZ WYLOTU, ODPRAWA, BOARDING, OPIEKA, NR CKI, NR GATE, PAX, UWAGI, PPS, ZNAKI
+        let flights = [];
+        for (let i = flightsStartIndex; i < jsonData.length; i++) {
+            const row = jsonData[i];
+            if (!row || row.length === 0 || !row[0]) continue;
+            
+            const flight = {
+                number: String(row[0] || ''),       // REJS
+                direction: String(row[1] || ''),    // KIERUNEK
+                time: String(row[2] || ''),         // GODZ WYLOTU
+                checkin: String(row[3] || ''),      // ODPRAWA
+                boarding: String(row[4] || ''),     // BOARDING
+                care: String(row[5] || ''),         // OPIEKA
+                nrCki: String(row[6] || ''),        // NR CKI
+                gate: String(row[7] || ''),         // NR GATE
+                pax: String(row[8] || ''),          // PAX
+                remarks: String(row[9] || ''),      // UWAGI
+                pps: String(row[10] || ''),         // PPS
+                znaki: String(row[11] || '')        // ZNAKI
+            };
+            
+            // Skip if flight number is empty or just a header
+            const flightNumLower = (flight.number || '').toLowerCase();
+            if (flightNumLower.includes('rejs') || flightNumLower.includes('numer')) continue;
+                
+            flights.push(flight);
+        }
+        
+        const selectedDate = currentDateSelection === 'today' ? getDate(0) : getDate(1);
+        const dateKey = formatDateKey(selectedDate);
+        
+        currentDniowkaData = {
+            date: dateKey,
+            topInfo: topInfo,
+            flights: flights
+        };
+        
+        // Save to storage (in real app this would be to server, here we use localStorage)
+        dniowkaStorage[dateKey] = currentDniowkaData;
+        localStorage.setItem('dniowkaStorage', JSON.stringify(dniowkaStorage));
+    }
+
+    function renderFlightList() {
+        const container = document.getElementById('flight-list');
+        if (!container) return;
+        
+        if (!currentDniowkaData || !currentDniowkaData.flights || currentDniowkaData.flights.length === 0) {
+            container.innerHTML = `<div class="text-center text-white/60 py-10">Brak lotów do wyświetlenia.</div>`;
+            return;
+        }
+        
+        let flightsToShow = currentDniowkaData.flights;
+        
+        if (currentTab === 'mine' && currentUser) {
+            const userName = currentUser.name.toLowerCase();
+            const userLastName = currentUser.name.split(' ').pop().toLowerCase(); // Get last name only
+            
+            flightsToShow = currentDniowkaData.flights.filter(flight => {
+                // Check ALL flight fields for the user's name OR last name
+                const flightText = Object.values(flight).join(' ').toLowerCase();
+                return flightText.includes(userName) || flightText.includes(userLastName);
+            });
+        }
+        
+        if (flightsToShow.length === 0) {
+            container.innerHTML = `<div class="text-center text-white/60 py-10">${currentTab === 'mine' ? 'Brak przypisanych lotów.' : 'Brak lotów.'}</div>`;
+            return;
+        }
+        
+        container.innerHTML = flightsToShow.map((flight, index) => `
+            <div class="flight-card" data-flight-index="${index}">
+                <div class="flight-card-header">
+                    <div class="flight-number">${flight.number} ${flight.direction ? '✈️ ' + flight.direction : ''}</div>
+                    <div class="flight-time">${flight.time}</div>
+                </div>
+                <div class="flight-card-content">
+                    ${flight.checkin ? `<div class="flight-detail"><span class="flight-detail-label">Odprawa:</span><span class="flight-detail-value">${flight.checkin}</span></div>` : ''}
+                    ${flight.boarding ? `<div class="flight-detail"><span class="flight-detail-label">Boardowanie:</span><span class="flight-detail-value">${flight.boarding}</span></div>` : ''}
+                    ${flight.care ? `<div class="flight-detail"><span class="flight-detail-label">Opieka:</span><span class="flight-detail-value">${flight.care}</span></div>` : ''}
+                    ${flight.nrCki ? `<div class="flight-detail"><span class="flight-detail-label">NR CKI:</span><span class="flight-detail-value">${flight.nrCki}</span></div>` : ''}
+                    ${flight.gate ? `<div class="flight-detail"><span class="flight-detail-label">NR GATE:</span><span class="flight-detail-value">${flight.gate}</span></div>` : ''}
+                    ${flight.pax ? `<div class="flight-detail"><span class="flight-detail-label">PAX:</span><span class="flight-detail-value">${flight.pax}</span></div>` : ''}
+                    ${flight.remarks ? `<div class="flight-detail"><span class="flight-detail-label">Uwagi:</span><span class="flight-detail-value">${flight.remarks}</span></div>` : ''}
+                    ${flight.pps ? `<div class="flight-detail"><span class="flight-detail-label">PPS:</span><span class="flight-detail-value">${flight.pps}</span></div>` : ''}
+                    ${flight.znaki ? `<div class="flight-detail"><span class="flight-detail-label">Znaki:</span><span class="flight-detail-value">${flight.znaki}</span></div>` : ''}
+                </div>
+            </div>
+        `).join('');
+        
+        // Add click listeners to expand cards
+        container.querySelectorAll('.flight-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('active');
+            });
+        });
+    }
+
+    function setupTabListeners() {
+        const tabAll = document.getElementById('tab-all');
+        const tabMine = document.getElementById('tab-mine');
+        
+        if (tabAll && tabMine) {
+            tabAll.addEventListener('click', () => {
+                currentTab = 'all';
+                tabAll.classList.add('active');
+                tabMine.classList.remove('active');
+                renderFlightList();
+            });
+            
+            tabMine.addEventListener('click', () => {
+                currentTab = 'mine';
+                tabMine.classList.add('active');
+                tabAll.classList.remove('active');
+                renderFlightList();
+            });
+        }
     }
 
     function renderSearchResults(filter = '', data, tiles = null) {
