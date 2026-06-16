@@ -279,6 +279,133 @@ document.addEventListener('DOMContentLoaded', () => {
         { code: 'LINK', desc: 'Opłata za powiązanie rezerwacji (dziecka z osobą dorosłą)' }
     ];
 
+    const ssrWizzCodes = [
+        { code: 'ACFS', desc: 'Opłata lotniskowa (prowizja)' },
+        { code: 'APCI', desc: 'Darmowa odprawa na lotnisku' },
+        { code: 'ATFA', desc: 'Transfer lotniskowy – z lotniska' },
+        { code: 'ATTA', desc: 'Transfer lotniskowy – na lotnisko' },
+        { code: 'AUCI', desc: 'Automatyczna odprawa' },
+        { code: 'BAPT', desc: 'Opłata za bagaż rejestrowany 20kg/32kg na check-in/gate na lotnisku' },
+        { code: 'BEXC', desc: 'Opłata za nadbagaż na lotnisku' },
+        { code: 'BLND', desc: 'Pasażer niewidzący/niedowidzący' },
+        { code: 'BONE', desc: 'Bagaż 20 kg x1' },
+        { code: 'BTWO', desc: 'Bagaż 20 kg x2' },
+        { code: 'BTHR', desc: 'Bagaż 20 kg x3' },
+        { code: 'BFOU', desc: 'Bagaż 20 kg x4' },
+        { code: 'BFIV', desc: 'Bagaż 20 kg x5' },
+        { code: 'BSIX', desc: 'Bagaż 20 kg x6' },
+        { code: 'BRB', desc: 'Śledzenie bagażu Blue Ribbon (usługa ubezpieczenia/śledzenia)' },
+        { code: 'CABC', desc: 'Opłata za 10kg bagażu rejestrowanego na check-in' },
+        { code: 'CABG', desc: 'Opłata za 10kg bagażu rejestrowanego na gate' },
+        { code: 'CARR', desc: 'Wykupiona usługa wynajmu samochodu' },
+        { code: 'CHKA', desc: 'Opłata za odprawę na lotnisku' },
+        { code: 'CHKS', desc: 'Odprawa rozpoczęta (niezakończona)' },
+        { code: 'DAA', desc: 'Odbiór przy samolocie (dotyczy np. wózków dziecięcych)' },
+        { code: 'DBCR', desc: 'Otrzymane odszkodowanie za odmowę przyjęcia na pokład' },
+        { code: 'DBRD', desc: 'Odmowa przyjęcia na pokład (Overbooking / Denied boarding)' },
+        { code: 'DEAF', desc: 'Pasażer z dysfunkcją słuchu' },
+        { code: 'DEPA', desc: 'Deportowany z eskortą' },
+        { code: 'DEPU', desc: 'Deportowany bez eskorty' },
+        { code: 'DISR', desc: 'Pasażer agresywny / zakłócający porządek' },
+        { code: 'DMBR', desc: 'Fikcyjna/testowa karta pokładowa' },
+        { code: 'DPNA', desc: 'Pasażer z niepełnosprawnością intelektualną lub rozwojową wymagający pomocy' },
+        { code: 'DUTY', desc: 'Podróż służbowa pracownika' },
+        { code: 'EXST', desc: 'Dodatkowe miejsce siedzące (Extra seat)' },
+        { code: 'EXTL', desc: 'Dodatkowe miejsce na nogi' },
+        { code: 'FAKE', desc: 'Pasażer posługujący się fałszywym dokumentem' },
+        { code: 'FARL', desc: 'Blokada ceny biletu (Fare lock)' },
+        { code: 'FGCC', desc: 'Wymuszone akceptowanie Ogólnych Warunków Przewozu' },
+        { code: 'FRRS', desc: 'Rezerwacja miejsca' },
+        { code: 'FSEC', desc: 'Fast track' },
+        { code: 'FSTR', desc: 'Fast track' },
+        { code: 'GOTW', desc: 'Taryfa Go fare' },
+        { code: 'GRSN', desc: 'Rezerwacja grupowa – senior' },
+        { code: 'GRST', desc: 'Rezerwacja grupowa – student' },
+        { code: 'HAJJ', desc: 'Pasażer posiadający wizę Hadżdż (pielgrzymka do Mekki)' },
+        { code: 'HLUG', desc: 'Serwis dotyczący bagażu podręcznego (do nadania za darmo)' },
+        { code: 'HNST', desc: 'Ukryte miejsce (na stronie internetowej, w aplikacji)' },
+        { code: 'HVBD', desc: 'Deklaracja bagażu o wysokiej wartości' },
+        { code: 'IMPS', desc: 'Podszywanie się pod inną osobę (pasażer posługujący się autentycznym dokumentem podróży innej osoby)' },
+        { code: 'INAD', desc: 'Pasażer z zakazem wjazdu / nieuprawniony do przekroczenia granicy' },
+        { code: 'INFT', desc: 'Niemowlę (infant)' },
+        { code: 'LCBG', desc: 'Nadwymiarowy bagaż podręczny' },
+        { code: 'LONE', desc: 'Bagaż 23 kg x1' },
+        { code: 'LTWO', desc: 'Bagaż 23 kg x2' },
+        { code: 'LTHR', desc: 'Bagaż 23 kg x3' },
+        { code: 'LFOU', desc: 'Bagaż 23 kg x4' },
+        { code: 'LFIV', desc: 'Bagaż 23 kg x5' },
+        { code: 'LSIX', desc: 'Bagaż 23 kg x6' },
+        { code: 'LNGE', desc: 'Dostęp do saloniku lotniskowego (Lounge)' },
+        { code: 'LONG', desc: 'Dostęp do saloniku lotniskowego (Lounge)' },
+        { code: 'MAAS', desc: 'Asysta i pomoc dla pasażera (Meet and assist)' },
+        { code: 'MASK', desc: 'Zwolniony z obowiązku noszenia maseczki na pokładzie' },
+        { code: 'MDDL', desc: 'Dodatkowa przestrzeń Wizz (Wizz Xtra Space)' },
+        { code: 'MEQP', desc: 'Sprzęt medyczny' },
+        { code: 'MOCI', desc: 'Odprawa mobilna' },
+        { code: 'MONE', desc: 'Bagaż 26 kg x1' },
+        { code: 'MTWO', desc: 'Bagaż 26 kg x2' },
+        { code: 'MTHR', desc: 'Bagaż 26 kg x3' },
+        { code: 'MFOU', desc: 'Bagaż 26 kg x4' },
+        { code: 'MFIV', desc: 'Bagaż 26 kg x5' },
+        { code: 'MSIX', desc: 'Bagaż 26 kg x6' },
+        { code: 'NCFI', desc: 'Bezpłatna zmiana danych/nazwiska dla niemowlęcia' },
+        { code: 'NCFR', desc: 'Dokonano bezpłatnej zmiany danych/nazwiska' },
+        { code: 'NOFL', desc: 'Pasażer objęty zakazem lotów – pasażer wpisany na firmową listę osób z zakazem latania' },
+        { code: 'OXY', desc: 'Tlen medyczny' },
+        { code: 'OLCI', desc: 'Odprawa online' },
+        { code: 'PASS', desc: 'Pierwszeństwo wejścia na pokład' },
+        { code: 'PNULL', desc: 'Bagaż 32 kg x0' },
+        { code: 'PONE', desc: 'Bagaż 32 kg x1' },
+        { code: 'PTWO', desc: 'Bagaż 32 kg x2' },
+        { code: 'PTHR', desc: 'Bagaż 32 kg x3' },
+        { code: 'PFOU', desc: 'Bagaż 32 kg x4' },
+        { code: 'PFIV', desc: 'Bagaż 32 kg x5' },
+        { code: 'PSIX', desc: 'Bagaż 32 kg x6' },
+        { code: 'PLF', desc: 'Formularz lokalizacji pasażera (Passenger Locator Form)' },
+        { code: 'PLFA', desc: 'Taryfa rodzinna Plus' },
+        { code: 'PLUS', desc: 'Taryfa / pakiet Plus' },
+        { code: 'PNUL', desc: 'Brak bagażu' },
+        { code: 'POSN', desc: 'Załoga pozycjonowana (przebazowanie personelu)' },
+        { code: 'PRB', desc: 'Pierwszeństwo wejścia na pokład' },
+        { code: 'PRBA', desc: 'Pierwszeństwo wejścia na pokład wykupione na lotnisku' },
+        { code: 'PRK', desc: 'Parking lotniskowy' },
+        { code: 'PRMC', desc: 'Zgoda RODO dotycząca pasażerów o ograniczonej sprawności ruchowej' },
+        { code: 'PRST', desc: 'Miejsce Premium (Premium seat)' },
+        { code: 'SIXT', desc: 'Wykupiony wynajem samochodu w wypożyczalni Sixt' },
+        { code: 'SMAR', desc: 'Taryfa / pakiet Smart' },
+        { code: 'SMCB', desc: 'Mały bagaż podręczny' },
+        { code: 'SMFA', desc: 'Rodzinna taryfa / pakiet Smart' },
+        { code: 'SPEA', desc: 'Sprzęt sportowy opłacony na lotnisku' },
+        { code: 'SPEQ', desc: 'Sprzęt sportowy' },
+        { code: 'SRVA', desc: 'Zwierzę asystujące' },
+        { code: 'STAF', desc: 'Pracownik / personel linii' },
+        { code: 'STFA', desc: 'Standardowa taryfa rodzinna / pakiet' },
+        { code: 'STND', desc: 'Standardowy typ bagażu w systemie GoNow' },
+        { code: 'STRD', desc: 'Taryfa / pakiet Wizz Go' },
+        { code: 'STRL', desc: 'Typ bagażu: wózek dziecięcy' },
+        { code: 'STTG', desc: 'Gwarancja miejsc obok siebie' },
+        { code: 'TDFI', desc: 'Bezpłatna zmiana dokumentu podróży niemowlęcia' },
+        { code: 'TDFR', desc: 'Bezpłatna zmiana dokumentu podróży pasażera' },
+        { code: 'TDNO', desc: 'Weryfikacja dokumentu podróży negatywna' },
+        { code: 'TDOK', desc: 'Weryfikacja dokumentu podróży pozytywna' },
+        { code: 'TONE', desc: 'Bagaż 10 kg x1' },
+        { code: 'TWFA', desc: 'Rodzinna taryfa / pakiet' },
+        { code: 'VLTR', desc: 'Ochotnik rezygnujący z lotu w przypadku overbookingu' },
+        { code: 'WCBD', desc: 'Wózek inwalidzki non spillable battery' },
+        { code: 'WCHC', desc: 'Wózek inwalidzki – pasażer całkowicie unieruchomiony (wymaga wniesienia na miejsce w kabinie)' },
+        { code: 'WCHR', desc: 'Wózek inwalidzki – pasażer może chodzić samodzielnie po płycie lotniska' },
+        { code: 'WCHS', desc: 'Wózek inwalidzki – pasażer nie może poruszać się po schodach' },
+        { code: 'WCMP', desc: 'Wózek inwalidzki manualny' },
+        { code: 'WCON', desc: 'Lot bez pokładowego wózka inwalidzkiego - NIE' },
+        { code: 'WCOY', desc: 'Lot bez pokładowego wózka inwalidzkiego - TAK' },
+        { code: 'WCPB', desc: 'Taryfa / pakiet Wizz Class Plus' },
+        { code: 'WCSB', desc: 'Taryfa / pakiet Wizz Class Smart' },
+        { code: 'WCIO', desc: 'Blokada odprawy internetowej' },
+        { code: 'WDCP', desc: 'Wizz Discount Club Premium' },
+        { code: 'WDCL', desc: 'Wizz Discount Club Premium Plus' },
+        { code: 'WIZT', desc: 'Pasażer Wizz Tours' },
+        { code: 'WTBF', desc: 'Pakiet Wizz Tours' }
+        ];
     // --- SPLASH ANIMATION ---
 
     function animateSplash(currentTime) {
@@ -322,7 +449,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Funkcja renderowania kodów SSR ---
     function renderSSRCodes(filter = '') {
-        const filtered = ssrCodes.filter(item => 
+        // Wybierz odpowiednią tablicę kodów w zależności od linii lotniczej
+        let codes = ssrCodes;
+        if (currentAirline === 'Wizz Air') {
+            codes = ssrWizzCodes;
+        }
+
+        const filtered = codes.filter(item => 
             item.code.toLowerCase().includes(filter.toLowerCase()) ||
             item.desc.toLowerCase().includes(filter.toLowerCase())
         );
@@ -412,7 +545,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     prmTrigger.addEventListener('click', () => showView('view-prm'));
-    airlinesTrigger.addEventListener('click', () => showView('view-airlines'));
+    airlinesTrigger.addEventListener('click', () => {
+        showView('view-airlines');
+        // Reset search input
+        const searchInput = document.getElementById('airline-search-input');
+        if (searchInput) {
+            searchInput.value = '';
+            // Show all airlines
+            document.querySelectorAll('#airline-list .mini-card').forEach(card => {
+                card.style.display = 'flex';
+            });
+        }
+    });
+
+    // Add airline search listener
+    document.addEventListener('input', (e) => {
+        if (e.target.id === 'airline-search-input') {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('#airline-list .mini-card').forEach(card => {
+                const airlineName = card.getAttribute('data-airline').toLowerCase();
+                if (airlineName.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    });
 
     // PRM Sub-triggers
     prmManualTrigger.addEventListener('click', () => showView('view-prm-manual'));
@@ -454,7 +613,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const operationalDataEnterAir = [
         { title: 'Check-in opens', desc: '2h ETD' },
         { title: 'Check-in closes', desc: '45 min ETD' },
-        { title: 'Boarding starts', desc: '45 min ETD' },
+        { title: 'Gate Opens', desc: '45 min ETD'},
+        { title: 'Boarding starts', desc: '30 min ETD' },
         { title: 'Boarding closes', desc: '10 min ETD' }
     ];
 
@@ -475,9 +635,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const enterAirTiles = [
         { action: 'topic', topic: 'EMEX', label: 'EMEX' },
-        { action: 'topic', topic: 'Kobiety w ciąży', label: 'Kobiety w ciąży' },
-        { action: 'topic', topic: 'Przedziały wiekowe', label: 'Przedziały wiekowe'},
+        { action: 'topic', topic: 'KOBIETY W CIĄŻY', label: 'KOBIETY W CIĄŻY' },
+        { action: 'topic', topic: 'PRZEDZIAŁY WIEKOWE', label: 'PRZEDZIAŁY WIEKOWE'},
         { action: 'topic', topic: 'UMNR', label: 'UMNR'},
+        { action: 'topic', topic: 'ZWIERZĘTA', label: 'ZWIERZĘTA'},
+        { action: 'topic', topic: 'BAGAŻE', label: 'BAGAŻE'},
+    ];
+
+    const wizzAirTiles = [
+        { action: 'topic', topic: 'Kobiety w ciąży', label: 'KOBIETY W CIĄŻY' },
+        { action: 'topic', topic: 'Przedziały wiekowe', label: 'PRZEDZIAŁY WIEKOWE' },
+        { action: 'topic', topic: 'Pies asystujący', label: 'PIES ASYSTUJĄCY' },
+        { action: 'topic', topic: 'Overbooking', label: 'OVERBOOKING' },
+        { action: 'topic', topic: 'EMEX', label: 'EMEX' },
+        { action: 'topic', topic: 'EXTRA SEAT', label: 'EXTRA SEAT' },
+        { action: 'ssr', label: 'SSR' }
     ];
 
     function showAirlineDetail(airline) {
@@ -521,11 +693,19 @@ document.addEventListener('DOMContentLoaded', () => {
                            class="w-full p-3 bg-white/10 border border-pink-300/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-pink-300">
                 </div>
                 <div id="search-results"></div>
-                <div class="mini-card" data-action="ssr" style="margin-top: 1rem;">
-                    <span class="font-bold">Kody SSR</span>
-                </div>
+                <div id="airline-tiles" class="airline-grid mt-4"></div>
             `;
-            renderOperationalBanner(operationalDataWizzAir);
+
+            setTimeout(() => {
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        renderSearchResults(e.target.value, operationalDataWizzAir, wizzAirTiles);
+                    });
+                }
+                renderOperationalBanner(operationalDataWizzAir);
+                renderAirlineTiles('', wizzAirTiles);
+            }, 0);
         } else if (airline === 'Enter Air') {
             airlineInfoContainer.innerHTML = `
                 <div class="mb-4">
@@ -609,7 +789,64 @@ document.addEventListener('DOMContentLoaded', () => {
         topicTitle.textContent = topic;
         
         if (topic === 'EMEX') {
-            if (currentAirline === 'Enter Air') {
+            if (currentAirline === 'Wizz Air') {
+                topicContent.innerHTML = `
+                    <div class="accordion-top-title">EMEX</div>
+                    
+                    <div class="accordion-item mb-3">
+                        <div class="accordion-header" data-accordion="1">
+                            <span>W rzędzie ewakuacyjnym nie mogą siedzieć:</span>
+                            <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-content-inner">
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>INF (do 2 r.ż)</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Dzieci</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Osoby poniżej 16 r.ż</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Kobiety w ciąży</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Osoby niepełnosprawne</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>UMNR</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Pasażerów z ograniczoną mobilnością ze względu na większą posturę, chorobę czy wiek</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Pasażerów cierpiących na choroby psychiczne, którzy mogą mieć problemy z szybkim przemieszczaniem się, gdy zostaną o to poproszeni</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Osoby deportowane</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Pasażerów podróżujących ze zwierzętami</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentAirline === 'Enter Air') {
                 topicContent.innerHTML = `
                     <div class="accordion-top-title">Emergency Seats</div>
                     
@@ -761,6 +998,195 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+        } else if (topic === 'ZWIERZĘTA' && currentAirline === 'Enter Air') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">Zwierzęta</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>PETC</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Tylko psy/koty</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Max 8kg z transporterem (48x33x25)</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Zwierzę musi swobodnie poruszać się w transporterze</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>AVIH</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Zwierzę do łuku bagażowego</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Twardy transporter (max 32kg)</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Zwierzę musi swobodnie poruszać się w transporterze</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Woda w środku</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="3">
+                        <span>SVAN</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner"></div>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+        } else if (topic === 'BAGAŻE' && currentAirline === 'Enter Air') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">Bagaże</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Bagaż rejestrowany</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Na jednego pasażera przysługuje 20kg bagażu rejestrowanego (80x120) natomiast należy pamiętać, że dla niektórych destynacji np. ZNZ, SLL (16kg) obowiązują inne limity wagowe.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>Bagaż podręczny</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Na jednego pasażera przysługuje 1 bagaż podręczny 5kg (55x40x20)</div>
+                            </div>
+                            <div class="accordion-subsection">
+                                <div class="accordion-subtitle">Dodatkowo można zabrać:</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>małą torbę podręczną</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Część ubioru</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Zakupy z duty free</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Parasol</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Jedzenie</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Laptop/kamera</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="3">
+                        <span>Bagaż infanta</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Bagaż podręczny 5kg + wózek/fotelik</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="4">
+                        <span>Bagaż sportowy</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner"></div>
+                    </div>
+                </div>
+                
+                <div class="info-banner mb-3 flex items-center justify-center gap-3 text-center">
+                    <div class="text-amber-400 text-2xl">⚠️</div>
+                    <p class="text-white">Nieopłacone bagaże (niepotwierdzone przez linię lotniczą) wysyłamy do opłacenia do PPO.</p>
+                </div>
+                
+                <div class="procedure-step text-white/90">Bagaż przekraczający 32kg potrzebuje wcześniejszej zgody przewoźnika.</div>
+            `;
             setTimeout(() => {
                 document.querySelectorAll('.accordion-header').forEach(header => {
                     header.addEventListener('click', () => {
@@ -1158,6 +1584,573 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }, 0);
 
+        } else if (topic === 'Kobiety w ciąży' && currentAirline === 'Wizz Air') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">Kobiety w ciąży</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Podróż po 28. tygodniu ciąży</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="procedure-step text-white/90">
+                                Pasażerki po ukończeniu 28. tygodnia ciąży mogą podróżować rejsami Wizz Air wyłącznie po okazaniu zaświadczenia lekarskiego potwierdzającego brak przeciwwskazań do podróży lotniczej. Dokument musi zostać wystawiony nie wcześniej niż 6 dni przed planowaną datą lotu.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>Brak zaświadczenia lekarskiego</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="procedure-step text-white/90">
+                                W przypadku braku wymaganego zaświadczenia lekarskiego (np. z powodu jego zagubienia, pozostawienia w domu) lub niemożności jego zweryfikowania (np. dokument jest nieczytelny lub sporządzony w języku obcym), pasażerka zobowiązana jest do podpisania Formularza Zrzeczenia się Odpowiedzialności (Disclaimer Form). Podpisanie formularza oznacza przyjęcie do wiadomości, że Wizz Air nie ponosi odpowiedzialności za jakiekolwiek późniejsze problemy zdrowotne pasażerki lub nienarodzonego dziecka związane z podróżą lotniczą. Formularz znajduje się w Załączniku Z i po podpisaniu powinien zostać przesłany za pośrednictwem strony internetowej WHA.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="3">
+                        <span>Ograniczenia wieku ciąży</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="procedure-step text-white/90">
+                                Ze względów bezpieczeństwa kobiety po ukończeniu 34. tygodnia ciąży nie są przyjmowane na pokład samolotów Wizz Air. W przypadku ciąży mnogiej (bliźniaczej lub wielopłodowej) ograniczenie to obowiązuje od ukończenia 32. tygodnia ciąży.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+        } else if (topic === 'Przedziały wiekowe' && currentAirline === 'Wizz Air') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">Przedziały wiekowe</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>INF</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>14 dni - 2 lata</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>15 INF na rejs</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Z INF może podróżować osoba mająca 16 lat, dwa infanty, musi być osoba pełnoletnia, nie może siedzieć w rzędzie ewakuacyjnym, rząd przed ani rząd za nim</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>CHILD</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>2 - 12 lat</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="procedure-step text-white/90">Osoba 16 lat może zabrać ze sobą grupę 10 osób mających 14 lat</div>
+                <div class="procedure-step text-white/90">Osoba mająca 14 lat może podróżować samodzielnie</div>
+                <div class="procedure-step text-white/90">Fotelik samochodowy jest możliwy do wzięcia na pokład jeśli zostało wykupione dodatkowe miejsce (montowany tyłem do kierunku jazdy)</div>
+            `;
+            
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+        } else if (topic === 'Pies asystujący' && currentAirline === 'Wizz Air') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">Pies asystujący</div>
+                
+                <div class="procedure-step text-white/90 mb-3">WizzAir akceptuje wyłącznie certyfikowane psy asystujące osobom z niepełnosprawnościami jako pies przewodnik.</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Zwierzęta asystujące SVAN muszą:</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Być wyłącznie psami.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Na jeden lot może zostać przyjęty tylko jeden pies.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Być zarezerwowane z kodem SSR SRVA.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Być przez cały czas w samolocie w uprzęży, na smyczy lub uwiązane.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Być przeszkolone do właściwego zachowania i znajdować się pod kontrolą swojego przewodnika.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Certyfikat potwierdzający, że pies jest certyfikowanym psem asystującym.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Wszelkie odpowiednie dokumenty określone w przepisach krajów, których dotyczy przewóz.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Posiadać całą niezbędną dokumentację, szczepienia i badania wymagane przez każdy kraj wylotu, przylotu oraz kraje tranzytowe.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+        } else if (topic === 'Overbooking' && currentAirline === 'Wizz Air') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">Postępowanie w przypadku overbookingu</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Kto musi lecieć?</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Osoby niepełnosprawne</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Starsze osoby</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Rodziny z dziećmi, infanty</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Młode osoby podróżujące samodzielnie</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>Przed rozpoczęciem odprawy (check-in)</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="procedure-step text-white/90">W przypadku, gdy liczba odprawionych pasażerów przekracza liczbę dostępnych miejsc w samolocie:</div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Sprawdzamy, ilu pasażerów nie ma przydzielonego miejsca w samolocie.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Weryfikujemy, którzy pasażerowie odprawili się jako ostatni (numer sequence).</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Ustalamy, czy dany pasażer musi podróżować (kto może lecieć, a kto nie).</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Sprawdzamy najbliższe dostępne połączenia alternatywne (w razie potrzeby można skonsultować się z PPO).</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Przygotowujemy prawa pasażera.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="3">
+                        <span>Podczas odprawy (check-in)</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Ogłaszamy overbooking (podczas odprawy najlepiej 2-3 razy).</div>
+                            </div>
+                            <div class="procedure-step text-white/90">Jeśli istnieje ryzyko, że pasażer nie poleci, a nadaje bagaż rejestrowany:</div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Informujemy pasażera o zaistniałej sytuacji,</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Do przywieszki bagażowej doklejamy oznaczenie „STANDBY”,</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Zgłaszamy do sortowni informację o bagażu „STANDBY”</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="4">
+                        <span>Podczas boardingu</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Pasażerów bez miejsca zgłaszających się do podczas boardingu informujemy o overbookingu i prosimy o oczekiwanie do zakończenia boardingu.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Czekamy do końca boardingu, aby upewnić się, że wszyscy pasażerowie mieli możliwość zgłoszenia się do wejścia na pokład.</div>
+                            </div>
+                            <div class="procedure-step text-white/90">Jeśli wszyscy pasażerowie z listy przyszli do gate:</div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Przed zamknięciem systemu weryfikujemy na pokładzie, czy wszystkie miejsca są faktycznie zajęte,</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Jeśli któreś miejsce pozostaje wolne, potwierdzamy, że przypisany do niego pasażer nie znajduje się na pokładzie.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Wolne miejsca przydzielamy pasażerom zgodnie z kolejnością na liście oczekujących (numer sequence odprawy).</div>
+                            </div>
+                            <div class="procedure-step text-white/90">Pasażerów, którzy nie zostali przyjęci na pokład:</div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Kierujemy do PPO w celu przebukowania na najbliższy dostępny rejs,</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>W miarę możliwości osobiście odprowadzamy pasażera lub przekazujemy osobie w PPO informację ile osób i kto przyjdzie,</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Dbamy o to, aby pasażer czuł się odpowiednio zaopiekowany i otrzymał niezbędne wsparcie oraz informacje dotyczące dalszej podróży.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Zamykamy system i przekazujemy rampie informacje o ilości pasażerów na pokładzie.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+
+        } else if (topic === 'EXTRA SEAT' && currentAirline === 'Wizz Air') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">EXTRA SEAT</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Przyczyny wykupienia dodatkowego miejsca</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Medycznych</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Dla komfortu</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Z powodu przewozu np. Instrumentu</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Dla infanta</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>Zasady rezerwacji</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="procedure-step text-white/90">Oba miejsca muszą zostać zarezerwowane w ramach jednej rezerwacji.</div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Pierwsze miejsce należy zarezerwować na dane pasażera, dodając kod SSR EXST.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Drugie miejsce należy wprowadzić w następujący sposób:</div>
+                            </div>
+                            <div class="accordion-list-item" style="margin-left: 2rem;">
+                                <div class="accordion-bullet"></div>
+                                <div>Nazwisko: nazwisko pasażera</div>
+                            </div>
+                            <div class="accordion-list-item" style="margin-left: 2rem;">
+                                <div class="accordion-bullet"></div>
+                                <div>Imię: EXST</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+        } else if (topic === 'TARYFY' && currentAirline === 'Ryanair') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">Taryfy</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>BASIC</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>1 mały bagaż podręczny w wymiarach 40x30x20</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>REGULAR (SSR - REGU)</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>1 mały bagaż podręczny</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>1 bagaż kabinowy w wymiarach 55x40x20</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Priorytetowe wejście</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Miejsca w określonych rzędach</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="3">
+                        <span>PLUS (SSR - SURE)</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>1 mały bagaż podręczny</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Bagaż rejestrowany 20kg na pasażera</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Darmowa odprawa na lotnisku</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="4">
+                        <span>FLEXI PLUS (SSR - PLUS)</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>1 mały bagaż podręczny</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>1 bagaż kabinowy</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Priorytetowe wejście</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Fast track</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Dowolne wybrane miejsce</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Darmowa odprawa na lotnisku</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="5">
+                        <span>FAMILY PLUS (SSR - FAMI)</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Bagaż rejestrowany 20kg</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Bagaż rejestrowany 10kg na pasażera</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Bezpłatne miejsca dla dzieci</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
         } else {
             topicContent.innerHTML = `
                 <div class="procedure-step text-center py-10">
@@ -1501,8 +2494,12 @@ document.addEventListener('DOMContentLoaded', () => {
             item.desc.toLowerCase().includes(lowerFilter)
         ) : [];
 
-        // Filtruj kody SSR
-        const filteredSSR = ssrCodes.filter(item => 
+        // Filtruj kody SSR w zależności od linii lotniczej
+        let codes = ssrCodes;
+        if (currentAirline === 'Wizz Air') {
+            codes = ssrWizzCodes;
+        }
+        const filteredSSR = codes.filter(item => 
             item.code.toLowerCase().includes(lowerFilter) ||
             item.desc.toLowerCase().includes(lowerFilter)
         );
