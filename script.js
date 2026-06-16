@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { pin: '4321', name: 'Maria Wójcik', role: 'Agent Lotniskowy' },
         { pin: '5678', name: 'Krzysztof Kaczmarek', role: 'Lider' },
         { pin: '8765', name: 'Magdalena Zielińska', role: 'Kierownik' },
-        { pin: '4557', name: 'Aleksandra Skwarek', role: 'Agent Lotniskowy'}
+        { pin: '4557', name: 'Nicole Pietrzak', role: 'Agent Lotniskowy'}
     ];
     
     let currentUser = null; // Will store the logged-in user object
