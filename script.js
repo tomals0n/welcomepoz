@@ -2440,8 +2440,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="flight-time">${flight.time}</div>
                 </div>
                 <div class="flight-card-content">
-                    ${flight.checkin ? `<div class="flight-detail"><span class="flight-detail-label">Odprawa:</span><span class="flight-detail-value">${flight.checkin}</span></div>` : ''}
-                    ${flight.boarding ? `<div class="flight-detail"><span class="flight-detail-label">Boardowanie:</span><span class="flight-detail-value">${flight.boarding}</span></div>` : ''}
+                    ${flight.checkin ? `<div class="flight-detail"><span class="flight-detail-label">Check-in:</span><span class="flight-detail-value">${flight.checkin}</span></div>` : ''}
+                    ${flight.boarding ? `<div class="flight-detail"><span class="flight-detail-label">Boarding:</span><span class="flight-detail-value">${flight.boarding}</span></div>` : ''}
                     ${flight.care ? `<div class="flight-detail"><span class="flight-detail-label">Opieka:</span><span class="flight-detail-value">${flight.care}</span></div>` : ''}
                     ${flight.nrCki ? `<div class="flight-detail"><span class="flight-detail-label">NR CKI:</span><span class="flight-detail-value">${flight.nrCki}</span></div>` : ''}
                     ${flight.gate ? `<div class="flight-detail"><span class="flight-detail-label">NR GATE:</span><span class="flight-detail-value">${flight.gate}</span></div>` : ''}
