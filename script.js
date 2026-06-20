@@ -23,6 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const topicTitle = document.getElementById('topic-title');
     const topicContent = document.getElementById('topic-content');
 
+    // Delegated listener for accordions (works on dynamically added content)
+    topicContent.addEventListener('click', (e) => {
+        const header = e.target.closest('.accordion-header');
+        if (header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.accordion-icon');
+            if (content && icon) {
+                content.classList.toggle('open');
+                icon.classList.toggle('open');
+            }
+        }
+    });
+
     let currentAirline = '';
     let currentTopic = '';
     
@@ -30,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const users = [
         { pin: '5559', name: 'Jan Kowalski', role: 'Lider' },
         { pin: '1234', name: 'Anna Nowak', role: 'Kierownik' },
-        { pin: '9876', name: 'Piotr Wiśniewski', role: 'Agent Lotniskowy' },
+        { pin: '9876', name: 'Piotr Skwarek', role: 'Agent Lotniskowy' },
         { pin: '4321', name: 'Maria Wójcik', role: 'Agent Lotniskowy' },
         { pin: '5678', name: 'Krzysztof Kaczmarek', role: 'Lider' },
         { pin: '8765', name: 'Magdalena Zielińska', role: 'Kierownik' },
@@ -38,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     
     let currentUser = null; // Will store the logged-in user object
+    let originalPinScreen = null; // To restore pin screen on logout
+    let originalSplashScreen = null; // To restore splash screen on re-login
     
     // --- DNIÓWKA DATA ---
     let currentDniowkaData = null; // { date: string, topInfo: {}, flights: [] }
@@ -47,51 +62,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     const monthsPL = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
 
-    // PIN handling
-    const pinMainInput = document.getElementById('pin-main-input');
-    const pinDots = document.querySelectorAll('.pin-dot');
-    const pinSubmit = document.getElementById('pin-submit');
-    const pinError = document.getElementById('pin-error');
-    
     // Variables for splash animation (resetable)
     let duration;
     let startTime;
-    
-    // Focus main input when clicking on the container
-    pinMainInput.parentElement.addEventListener('click', () => {
-        pinMainInput.focus();
-    });
-    
-    // Handle PIN input
-    pinMainInput.addEventListener('input', (e) => {
-        // Only allow digits
-        if (!/^\d*$/.test(e.target.value)) {
-            e.target.value = e.target.value.replace(/[^\d]/g, '');
-        }
-        
-        // Limit to 4 digits
-        if (e.target.value.length > 4) {
-            e.target.value = e.target.value.slice(0, 4);
-        }
-        
-        // Update dots
-        updatePinDots(e.target.value.length);
-        
-        // Hide error when typing
-        pinError.classList.add('hidden');
-    });
-    
-    // Handle backspace for better UX
-    pinMainInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace') {
-            setTimeout(() => {
-                updatePinDots(pinMainInput.value.length);
-            }, 0);
-        }
-    });
-    
-    function updatePinDots(count) {
-        pinDots.forEach((dot, index) => {
+
+    // Function to get current pin elements (since they're recreated on logout)
+    function getPinElements() {
+        return {
+            screen: document.getElementById('pin-screen'),
+            input: document.getElementById('pin-main-input'),
+            dots: document.querySelectorAll('.pin-dot'),
+            submit: document.getElementById('pin-submit'),
+            error: document.getElementById('pin-error')
+        };
+    }
+
+    // Update dots - accepts optional dot elements
+    function updatePinDots(count, dotElements = null) {
+        const dots = dotElements || getPinElements().dots;
+        dots.forEach((dot, index) => {
             if (index < count) {
                 dot.classList.add('filled');
             } else {
@@ -99,51 +88,149 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
-    // Handle submit button
-    pinSubmit.addEventListener('click', checkPin);
-    
-    // Also submit when Enter is pressed
-    pinMainInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            checkPin();
-        }
-    });
-    
+
+    // Initialize pin screen once on load
+    function initializePinScreen() {
+        const elements = getPinElements();
+        if (!elements.screen) return;
+
+        originalPinScreen = elements.screen.cloneNode(true);
+        originalSplashScreen = document.getElementById('splash-screen').cloneNode(true);
+
+        // Focus main input when clicking on the container
+        elements.input?.parentElement?.addEventListener('click', () => {
+            elements.input?.focus();
+        });
+
+        // Handle PIN input
+        elements.input?.addEventListener('input', (e) => {
+            // Only allow digits
+            if (!/^\d*$/.test(e.target.value)) {
+                e.target.value = e.target.value.replace(/[^\d]/g, '');
+            }
+            // Limit to 4 digits
+            if (e.target.value.length > 4) {
+                e.target.value = e.target.value.slice(0, 4);
+            }
+            // Update dots
+            updatePinDots(e.target.value.length, elements.dots);
+            // Hide error when typing
+            elements.error?.classList.add('hidden');
+        });
+
+        // Handle backspace for better UX
+        elements.input?.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace') {
+                setTimeout(() => {
+                    updatePinDots(elements.input.value.length, elements.dots);
+                }, 0);
+            } else if (e.key === 'Enter') {
+                checkPin();
+            }
+        });
+
+        // Handle submit button
+        elements.submit?.addEventListener('click', checkPin);
+    }
+    initializePinScreen();
+
     function checkPin() {
-        const enteredPin = pinMainInput.value;
-        if (enteredPin.length === 4) {
+        const elements = getPinElements();
+        const enteredPin = elements.input?.value;
+        if (enteredPin && enteredPin.length === 4) {
             const user = users.find(u => u.pin === enteredPin);
             if (user) {
                 // Correct PIN - log user in!
                 currentUser = user;
-                pinError.classList.add('hidden');
-                pinScreen.style.opacity = '0';
-                pinScreen.style.visibility = 'hidden';
+                elements.error?.classList.add('hidden');
+                elements.screen.style.opacity = '0';
+                elements.screen.style.visibility = 'hidden';
                 setTimeout(() => {
-                    pinScreen.remove();
+                    elements.screen.remove();
                 }, 800);
+                
+                // HIDE APP CONTAINER FIRST!
+                appContainer.style.opacity = '0';
+                appContainer.style.visibility = 'hidden';
+                
+                // Make sure splash screen is present (re-add from clone if needed)
+                let currentSplash = document.getElementById('splash-screen');
+                if (!currentSplash && originalSplashScreen) {
+                    currentSplash = originalSplashScreen.cloneNode(true);
+                    document.body.insertBefore(currentSplash, document.getElementById('app-container'));
+                }
                 
                 // Reset and start splash animation
                 duration = 3000;
                 startTime = performance.now();
-                loaderBar.style.width = '0%'; // Reset progress bar
-                splash.style.opacity = '1';
-                splash.style.visibility = 'visible';
+                const currentLoaderBar = document.getElementById('loader-bar');
+                if (currentLoaderBar) currentLoaderBar.style.width = '0%'; // Reset progress bar
+                if (currentSplash) {
+                    currentSplash.style.opacity = '1';
+                    currentSplash.style.visibility = 'visible';
+                }
                 requestAnimationFrame(animateSplash);
             } else {
                 // Wrong PIN - show error and clear inputs
-                pinError.classList.remove('hidden');
-                pinMainInput.value = '';
-                updatePinDots(0);
-                pinMainInput.focus();
+                elements.error?.classList.remove('hidden');
+                elements.input.value = '';
+                updatePinDots(0, elements.dots);
+                elements.input.focus();
                 // Hide error after 2 seconds
                 setTimeout(() => {
-                    pinError.classList.add('hidden');
+                    elements.error?.classList.add('hidden');
                 }, 2000);
             }
         }
     }
+
+    // Logout functionality
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#logout-button')) {
+            // Reset user
+            currentUser = null;
+            // Clear logged in info
+            const infoDiv = document.getElementById('logged-in-info');
+            if(infoDiv) infoDiv.innerHTML = '';
+            // HIDE APP CONTAINER FIRST!
+            appContainer.style.opacity = '0';
+            appContainer.style.visibility = 'hidden';
+            // Re-add pin screen
+            document.body.appendChild(originalPinScreen.cloneNode(true));
+            // Get the new elements
+            const newElements = getPinElements();
+            // Re-attach all event listeners to new elements
+            newElements.input?.parentElement?.addEventListener('click', () => newElements.input?.focus());
+            newElements.input?.addEventListener('input', (e) => {
+                if (!/^\d*$/.test(e.target.value)) {
+                    e.target.value = e.target.value.replace(/[^\d]/g, '');
+                }
+                if (e.target.value.length > 4) {
+                    e.target.value = e.target.value.slice(0, 4);
+                }
+                updatePinDots(e.target.value.length, newElements.dots);
+                newElements.error?.classList.add('hidden');
+            });
+            newElements.input?.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace') {
+                    setTimeout(() => {
+                        updatePinDots(newElements.input.value.length, newElements.dots);
+                    }, 0);
+                } else if (e.key === 'Enter') {
+                    checkPin();
+                }
+            });
+            newElements.submit?.addEventListener('click', checkPin);
+            
+            // Show pin screen
+            newElements.screen.style.opacity = '1';
+            newElements.screen.style.visibility = 'visible';
+            // Reset input
+            newElements.input.value = '';
+            updatePinDots(0, newElements.dots);
+            newElements.input.focus();
+        }
+    });
 
     // --- Dane krajów dla dokumentów wjazdowych ---
     const countriesData = [
@@ -413,21 +500,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const progress = Math.min(elapsed / duration, 1);
         
         const percentage = progress * 100;
-        loaderBar.style.width = `${percentage}%`;
+        // Find the current loader bar (could be original or re-added clone)
+        const currentLoaderBar = document.getElementById('loader-bar');
+        if (currentLoaderBar) currentLoaderBar.style.width = `${percentage}%`;
 
         if (progress < 1) {
             requestAnimationFrame(animateSplash);
         } else {
             setTimeout(() => {
-                splash.style.opacity = '0';
-                splash.style.visibility = 'hidden';
+                const currentSplash = document.getElementById('splash-screen');
+                if (currentSplash) {
+                    currentSplash.style.opacity = '0';
+                    currentSplash.style.visibility = 'hidden';
+                }
                 
                 appContainer.style.visibility = 'visible';
                 appContainer.style.opacity = '1';
                 showLoggedInUser();
                 
                 setTimeout(() => {
-                    splash.remove();
                     document.body.style.overflow = 'auto';
                 }, 800);
             }, 500);
@@ -587,51 +678,60 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // ETD NA SAMEJ GÓRZE KAŻDEJ LINI LOTNICZEJ
+    // STD NA SAMEJ GÓRZE KAŻDEJ LINI LOTNICZEJ
     
     const operationalDataRyanair = [
-        { title: 'Check-in opens', desc: '2h ETD' },
-        { title: 'Check-in closes', desc: '40 min ETD' },
-        { title: 'Boarding starts', desc: '50-51 min ETD', note: 'skanujemy pierwsze 15 osób z priorytetem jeśli na rejsie jest więcej niż 30 osób z PS' },
-        { title: 'Boarding closes', desc: '15 min ETD' }
+        { title: 'Check-in opens', desc: '2h STD' },
+        { title: 'Check-in closes', desc: '40 min STD' },
+        { title: 'Boarding starts', desc: '50-51 min STD', note: 'skanujemy pierwsze 15 osób z priorytetem jeśli na rejsie jest więcej niż 30 osób z PS' },
+        { title: 'Boarding closes', desc: '15 min STD' }
     ];
     
     const operationalDataRyanairSun = [
-        { title: 'Check-in opens', desc: '2h ETD' },
-        { title: 'Check-in closes', desc: '40 min ETD' },
-        { title: 'Boarding starts', desc: '50-51 min ETD' },
-        { title: 'Boarding closes', desc: '15 min ETD' }
+        { title: 'Check-in opens', desc: '2h STD' },
+        { title: 'Check-in closes', desc: '40 min STD' },
+        { title: 'Boarding starts', desc: '50-51 min STD' },
+        { title: 'Boarding closes', desc: '15 min STD' }
     ];
     
     const operationalDataWizzAir = [
-        { title: 'Check-in opens', desc: '2h ETD' },
-        { title: 'Check-in closes', desc: '40 min ETD' },
-        { title: 'Boarding starts', desc: '50 min ETD / 1h ETD' },
-        { title: 'Boarding closes', desc: '14 min ETD' }
+        { title: 'Check-in opens', desc: '2h STD' },
+        { title: 'Check-in closes', desc: '40 min STD' },
+        { title: 'Boarding starts', desc: '50 min STD / 1h STD' },
+        { title: 'Boarding closes', desc: '14 min STD' }
     ];
     
+    const operationalDataRyanairBuzz = [...operationalDataRyanair]; // Same as Ryanair
     const operationalDataEnterAir = [
-        { title: 'Check-in opens', desc: '2h ETD' },
-        { title: 'Check-in closes', desc: '45 min ETD' },
-        { title: 'Gate Opens', desc: '45 min ETD'},
-        { title: 'Boarding starts', desc: '30 min ETD' },
-        { title: 'Boarding closes', desc: '10 min ETD' }
+        { title: 'Check-in opens', desc: '2h STD' },
+        { title: 'Check-in closes', desc: '45 min STD' },
+        { title: 'Gate Opens', desc: '45 min STD'},
+        { title: 'Boarding starts', desc: '30 min STD' },
+        { title: 'Boarding closes', desc: '10 min STD' }
+    ];
+    const operationalDataOmega = [
+        { title: 'Check-in opens', desc: '3h STD' },
+        { title: 'Check-in closes', desc: '1h STD' },
+        { title: 'Boarding starts', desc: '1h STD' }
     ];
 
     // KAFELKI W KAŻDEJ LINI LOTNICZEJ
 
     const ryanairTiles = [
         { action: 'topic', topic: 'TARYFY', label: 'TARYFY' },
+        { action: 'topic', topic: 'KATEGORIE WIEKOWE', label: 'KATEGORIE WIEKOWE' },
         { action: 'topic', topic: 'ILE NA REJS', label: 'ILE NA REJS' },
         { action: 'topic', topic: 'OVERBOOKING', label: 'OVERBOOKING' },
         { action: 'topic', topic: 'EMEX', label: 'EMEX' },
         { action: 'topic', topic: 'EXTRA SEAT', label: 'EXTRA SEAT' },
         { action: 'topic', topic: 'KOBIETY W CIĄŻY', label: 'KOBIETY W CIĄŻY' },
-        { action: 'topic', topic: 'ODWOŁANIE', label: 'ODWOŁANIE' },
+        { action: 'topic', topic: 'ODWOŁADNIE', label: 'ODWOŁADNIE' },
         { action: 'topic', topic: 'LRB', label: 'LRB' },
         { action: 'topic', topic: 'PIES ASYSTUJĄCY', label: 'PIES ASYSTUJĄCY' },
         { action: 'ssr', label: 'SSR' }
     ];
+
+    const ryanairBuzzTiles = [...ryanairTiles]; // Same as Ryanair
     
     const enterAirTiles = [
         { action: 'topic', topic: 'EMEX', label: 'EMEX' },
@@ -640,6 +740,12 @@ document.addEventListener('DOMContentLoaded', () => {
         { action: 'topic', topic: 'UMNR', label: 'UMNR'},
         { action: 'topic', topic: 'ZWIERZĘTA', label: 'ZWIERZĘTA'},
         { action: 'topic', topic: 'BAGAŻE', label: 'BAGAŻE'},
+    ];
+    const omegaTiles = [
+        { action: 'topic', topic: 'EMEX', label: 'EMEX' },
+        { action: 'topic', topic: 'BAGAŻE', label: 'BAGAŻE' },
+        { action: 'topic', topic: 'KOBIETA W CIĄŻY', label: 'KOBIETA W CIĄŻY' },
+        { action: 'topic', topic: 'UMNR', label: 'UMNR' }
     ];
 
     const wizzAirTiles = [
@@ -657,7 +763,9 @@ document.addEventListener('DOMContentLoaded', () => {
         airlineDetailName.textContent = airline;
         airlineInfoContainer.innerHTML = '';
 
-        if (airline === 'Ryanair') {
+        if (airline === 'Ryanair' || airline === 'Ryanair Buzz') {
+            const tiles = airline === 'Ryanair' ? ryanairTiles : ryanairBuzzTiles;
+            const data = airline === 'Ryanair' ? operationalDataRyanair : operationalDataRyanairBuzz;
             airlineInfoContainer.innerHTML = `
                 <div class="mb-4">
                     <input type="text" id="search-input" placeholder="Wyszukiwarka"
@@ -671,21 +779,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const searchInput = document.getElementById('search-input');
                 if (searchInput) {
                     searchInput.addEventListener('input', (e) => {
-                        renderSearchResults(e.target.value, operationalDataRyanair, ryanairTiles);
+                        renderSearchResults(e.target.value, data, tiles);
                     });
                 }
-                renderSearchResults('', operationalDataRyanair, ryanairTiles);
-                renderAirlineTiles('', ryanairTiles);
+                renderSearchResults('', data, tiles);
+                renderAirlineTiles('', tiles);
             }, 0);
-        } else if (airline === 'Ryanair Sun') {
-            airlineInfoContainer.innerHTML = `
-                <div class="mb-4">
-                    <input type="text" id="search-input" placeholder="Wyszukiwarka"
-                           class="w-full p-3 bg-white/10 border border-pink-300/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-pink-300">
-                </div>
-                <div id="search-results"></div>
-            `;
-            renderOperationalBanner(operationalDataRyanairSun);
         } else if (airline === 'Wizz Air') {
             airlineInfoContainer.innerHTML = `
                 <div class="mb-4">
@@ -739,6 +838,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 renderAirlineTiles('', enterAirTiles);
             }, 0);
+        } else if (airline === 'Omega (Mavigok)') {
+            airlineInfoContainer.innerHTML = `
+                <div class="mb-4">
+                    <input type="text" id="search-input" placeholder="Wyszukiwarka"
+                           class="w-full p-3 bg-white/10 border border-pink-300/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-pink-300">
+                </div>
+                <div id="search-results"></div>
+                <div id="airline-tiles" class="airline-grid mt-4"></div>
+            `;
+            
+            setTimeout(() => {
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        renderSearchResults(e.target.value, operationalDataOmega, omegaTiles);
+                    });
+                }
+                renderSearchResults('', operationalDataOmega, omegaTiles);
+                renderAirlineTiles('', omegaTiles);
+            }, 0);
         } else {
             airlineInfoContainer.innerHTML = `
                 <div class="procedure-step text-center py-10">
@@ -755,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (container && data) {
             container.innerHTML = `
                 <div class="info-banner mb-4">
-                    <p class="font-bold mb-2">ETD:</p>
+                    <p class="font-bold mb-2">STD:</p>
                     <ul class="space-y-2 text-sm">
                         ${data.map(item => `
                             <li>
@@ -788,8 +907,307 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTopic = topic;
         topicTitle.textContent = topic;
         
-        if (topic === 'EMEX') {
-            if (currentAirline === 'Wizz Air') {
+        if (topic === 'BAGAŻE' && currentAirline === 'Omega (Mavigok)') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">BAGAŻE</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Bagaż rejestrowany</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Na jednego pasażera przysługuje jedna sztuka bagażu rejestrowanego 20kg</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>Infant bagaż rejestrowany</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>10kg + wózek/fotelik</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="3">
+                        <span>Bagaż podręczny</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Maksymalnie 8kg 55x40x20 cm</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="4">
+                        <span>Poolowanie bagażu</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Jeżeli jeden bagaż ma więcej kilogramów niż drugi to dodajemy te dwie wartości do siebie, jednak waga nie może przekroczyć łącznie 40 kg za dwa bagaże i jeden bagaż nie może być cięższy niż 32kg (jest możliwe w obrębie jednej rezerwacji jeżeli jest to rodzina).</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="5">
+                        <span>Bagaże sportowe</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>GOLF, BIKE, DIVE, SKI - jeżeli bagaże wcześniej nie zostały opłacone, to pasażer musi opłacić w PPO.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="6">
+                        <span>Bagaż przekraczający 32kg</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Musi być wcześniej zgłoszony i zaakceptowany przez przewoźnika.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (topic === 'KOBIETA W CIĄŻY' && currentAirline === 'Omega (Mavigok)') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">KOBIETA W CIĄŻY</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Ciąża pojedyncza</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Linia MGA nie zaleca podróży po 28 tygodniu ciąży, natomiast przyjmie z zaświadczeniem lekarskim od początku 28 tygodnia ciąży do 36 tygodnia, po 37 tygodniu pasażerka nie może zostać przyjęta na pokład, nawet jeśli posiada zaświadczenie lekarskie.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>Ciąża bliźniacza</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Jeśli pasażerka spodziewa się bliźniąt, nie może zostać wpuszczona na pokład po 32 tygodniu ciąży</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="3">
+                        <span>Zaświadczenie lekarskie</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>MGA musi otrzymać kopię zaświadczenia lekarskiego przed lotem.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Jeśli ciąża przebiega w sposób inny niż prawidłowy, bez względu na czas jej trwania, wymagane będzie zaświadczenie lekarskie stwierdzające, że pasażerka jest zdolna do podróży.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Ważne: Zaświadczenie lekarskie uznaje się za ważne przez 10 dni przed lotem i musi być ono sporządzone w języku angielskim.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="4">
+                        <span>Po porodzie</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Nie zaleca się podróżowania kobietom w ciągu 7 dni od porodu. W wyjątkowych okolicznościach mogą one zostać przyjęte na podróż, ale tylko w towarzystwie osoby z kwalifikacjami medycznymi.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Do potwierdzenia zdolności do lotu wymagane jest upoważnienie medyczne (medical clearance).</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Ważne: Zaświadczenie lekarskie uznaje się za ważne przez 10 dni przed lotem i musi być ono sporządzone w języku angielskim.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (topic === 'UMNR' && currentAirline === 'Omega (Mavigok)') {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">UMNR</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Dziecko 6-12 lat</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Dziecko może podróżować samo w wieku 6-12 lat, natomiast musi być jako UM</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Nie może siedzieć w wyjściu awaryjnym</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Na rejsach MGA UM dozwolone tylko, jeżeli przydzielony jest specjalny personel podkładowy dla UM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>Młodzi pasażerowie 12-18 lat</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Młodzi pasażerowie 12-18 lat mogą podróżować samodzielnie lub na żądanie jako UMNR</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (topic === 'EMEX') {
+            if (currentAirline === 'Omega (Mavigok)') {
+                topicContent.innerHTML = `
+                    <div class="accordion-top-title">EMEX</div>
+                    
+                    <div class="accordion-item mb-3">
+                        <div class="accordion-header" data-accordion="1">
+                            <span>W rzędzie ewakuacyjnym nie mogą siedzieć:</span>
+                            <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-content-inner">
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Infanty</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Osoby poniżej 15 r.ż</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Kobiety w ciąży</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>PRM</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Pasażerowie z ograniczoną mobilnością ze względu na większą posturę, chorobę, wiek</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Pasażerowie cierpiący psychicznie, którzy mogą mieć problemy z szybkim poruszaniem, kiedy zostaną o to poproszeni</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Osoby deportowane</div>
+                                </div>
+                                <div class="accordion-list-item">
+                                    <div class="accordion-bullet"></div>
+                                    <div>Pasażerowie podróżujący ze zwierzętami</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                setTimeout(() => {
+                    document.querySelectorAll('.accordion-header').forEach(header => {
+                        header.addEventListener('click', () => {
+                            const content = header.nextElementSibling;
+                            const icon = header.querySelector('.accordion-icon');
+                            content.classList.toggle('open');
+                            icon.classList.toggle('open');
+                        });
+                    });
+                }, 0);
+            } else if (currentAirline === 'Wizz Air') {
                 topicContent.innerHTML = `
                     <div class="accordion-top-title">EMEX</div>
                     
@@ -916,6 +1334,402 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
             
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+        } else if (topic === 'EMEX' && (currentAirline === 'Ryanair' || currentAirline === 'Ryanair Buzz')) {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">EMEX</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>W rzędzie ewakuacyjnym nie mogą siedzieć:</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>INF (do 2 r.ż)</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Dzieci</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Osoby poniżej 16 r.ż</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Kobiety w ciąży</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Osoby niepełnosprawne</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>UMNR</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Pasażerów z ograniczoną mobilnością ze względu na większą posturę, chorobę czy wiek</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Pasażerów cierpiących na choroby psychiczne, którzy mogą mieć problemy z szybkim przemieszczaniem się, gdy zostaną o to poproszeni</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Osoby deportowane</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Pasażerów podróżujących ze zwierzętami</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+        } else if (topic === 'KATEGORIE WIEKOWE' && (currentAirline === 'Ryanair' || currentAirline === 'Ryanair Buzz')) {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">Kategorie wiekowe</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>INFANT</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>0-7 dni nie może podróżować</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>8 dni-2 lata</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>CHILD</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>2-12 lat</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="3">
+                        <span>TEEN</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>12-16 lat (od 16 lat może podróżować samodzielnie)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="4">
+                        <span>ADULT</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Powyżej 16 lat</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+        } else if (topic === 'ODWOŁADNIE' && (currentAirline === 'Ryanair' || currentAirline === 'Ryanair Buzz')) {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">Procedura w przypadku odwołania lotu</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Za obsługę pasażerów w przypadku odwołania lotu odpowiada PPO, w zakresie:</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>przebukowania pasażerów na najbliższe dostępne połączenia</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Przekazanie miejsca noclegu oraz transportu (organizuje lider)</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>wydawania informacji o prawach pasażera</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>Agenci Check-in mogą wspierać PPO poprzez:</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>wydawania informacji o noclegu, transporcie</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Informowanie pasażerów o postępach przebukowania</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => {
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.accordion-icon');
+                        content.classList.toggle('open');
+                        icon.classList.toggle('open');
+                    });
+                });
+            }, 0);
+        } else if (topic === 'LRB' && (currentAirline === 'Ryanair' || currentAirline === 'Ryanair Buzz')) {
+            topicContent.innerHTML = `
+                <div class="accordion-top-title">LRB - Limited Release</div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="1">
+                        <span>Limited Release (LR) to procedura stosowana podczas przyjęcia bagażu rejestrowanego podczas odprawy, gdy:</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>bagaż jest już uszkodzony, lub</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>bagaż/opakowanie nie spełnia standardu (np. słabe, niestabilne, nieodpowiednie zabezpieczenie)</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>a pasażer mimo poinformowania o ryzyku decyduje się nadać bagaż</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="2">
+                        <span>Kiedy STOSUJEMY Limited Release (typowe przypadki):</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Stosuj LR, gdy bagaż jest przyjmowany, ale występuje realne ryzyko dalszego uszkodzenia lub reklamacji wynikającej z jego stanu/opakowania.</div>
+                            </div>
+                            <div class="accordion-sub-section">
+                                <div class="accordion-sub-title">Bagaż już uszkodzony:</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>pęknięta obudowa walizki, naderwana tkanina</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>uszkodzone kółka, rączka, zamki</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>pęknięte narożniki, wygięta rama</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>wcześniej oklejany/naprawiany „na szybko” (taśmy, opaski)</div>
+                            </div>
+                            <div class="accordion-sub-section">
+                                <div class="accordion-sub-title">Niewłaściwe opakowanie / zabezpieczenie:</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>torby/plecaki bez sztywnych ścian, z luźnymi paskami</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>kartony, worki, reklamówki, foliowe torby (jeśli przewoźnik dopuszcza – zawsze LR)</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>przeładowane walizki (rozchodzące się zamki, deformacje)</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>brak możliwości stabilnego zamknięcia</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>wystające elementy, luźne paski/taśmy mogące wkręcić się w taśmociąg</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>przedmioty kruche/łamliwe w bagażu rejestrowanym (np. szkło), jeśli pasażer mimo sugestii nie przepakuje</div>
+                            </div>
+                            <div class="accordion-sub-section">
+                                <div class="accordion-sub-title">Przedmioty „specjalne” w bagażu rejestrowanym (w zależności od zasad przewoźnika):</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>sprzęt sportowy w niestandardowym futerale</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>instrument muzyczny w miękkim pokrowcu</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>wózek dziecięcy/elementy z widocznymi śladami eksploatacji (uwaga: tylko jeśli procedura przewoźnika to dopuszcza)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="3">
+                        <span>Kiedy NIE STOSUJEMY LR (odmowa przyjęcia / inne rozwiązanie):</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>LR nie zastępuje zasad bezpieczeństwa i warunków przewozu. Nie przyjmujemy bagażu (lub wymagamy przepakowania), gdy:</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>bagaż zagraża bezpieczeństwu (ostre elementy, wycieki, podejrzenie materiałów niebezpiecznych, zapach paliw/chemikaliów)</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>nie da się go zamknąć / zawartość wypada / elementy odstają w sposób nieusuwalny</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>bagaż jest tak uszkodzony, że nie przejdzie procesu sortowania/transportu (np. brak dna, urwana większa część obudowy)</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>przekroczenia limitów: waga/wymiary – tu obowiązuje standardowa procedura dopłat/odmowy, a nie LR</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>pasażer odmawia podpisu/akceptacji warunków LR (jeśli podpis jest wymagany w Waszym procesie)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item mb-3">
+                    <div class="accordion-header" data-accordion="4">
+                        <span>Procedura w przypadku uszkodzonego bagażu:</span>
+                        <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Informujemy pasażera o uszkodzonym bagażu oraz potrzebie oznaczenia go specjalną limitką z podpisem.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Z tyłu wydrukowanej z GoNow przywieszki bagażowej zaznaczamy uszkodzony bagaż oraz przekazujemy pasażerowi do podpisu.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>w GoNow w rezerwacji pasażera dodajemy w services (f6) SSR Limited Release Bags (LRB), wpisujemy komentarz, gdzie opisujemy co jest uszkodzone oraz numer przywieszki bagażowej.</div>
+                            </div>
+                            <div class="accordion-list-item">
+                                <div class="accordion-bullet"></div>
+                                <div>Wysyłamy do lidera/koordynatora maila z informacją o LRB: data, numer lotu, numer przywieszki bagażowej (Warto dopisać numer rezerwacji oraz co było uszkodzone).</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
             setTimeout(() => {
                 document.querySelectorAll('.accordion-header').forEach(header => {
                     header.addEventListener('click', () => {
@@ -2180,12 +2994,52 @@ document.addEventListener('DOMContentLoaded', () => {
         const infoDiv = document.getElementById('logged-in-info');
         if (infoDiv && currentUser) {
             const shortName = currentUser.name.split(' ')[0] + ' ' + currentUser.name.split(' ')[1].charAt(0) + '.';
-            infoDiv.innerHTML = `Zalogowany jako: <strong>${shortName}</strong> (${currentUser.role})`;
+            infoDiv.innerHTML = `<strong>${shortName}</strong> (${currentUser.role})`;
         }
+    }
+
+    function formatDateLabel(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = months[date.getMonth()];
+        return `${day} ${month}`;
     }
 
     function showDniowkaView() {
         showView('view-dniowka');
+        
+        // Update date button labels
+        const todayBtn = document.getElementById('date-btn-today');
+        const tomorrowBtn = document.getElementById('date-btn-tomorrow');
+        const todayDate = getDate(0);
+        const tomorrowDate = getDate(1);
+        if (todayBtn) todayBtn.innerHTML = `Dzisiaj<br><span class="text-xs text-white/60">${formatDateLabel(todayDate)}</span>`;
+        if (tomorrowBtn) tomorrowBtn.innerHTML = `Jutro<br><span class="text-xs text-white/60">${formatDateLabel(tomorrowDate)}</span>`;
+
+        // Setup date button listeners
+        [todayBtn, tomorrowBtn].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', (e) => {
+                    const newSelection = e.target.closest('#date-btn-today') ? 'today' : 'tomorrow';
+                    if (newSelection !== currentDateSelection) {
+                        currentDateSelection = newSelection;
+                        // Update active class
+                        document.querySelectorAll('#dniowka-date-selector .date-btn').forEach(b => b.classList.remove('active'));
+                        e.target.closest('.date-btn').classList.add('active');
+                        // Load data for new date
+                        const selectedDate = currentDateSelection === 'today' ? getDate(0) : getDate(1);
+                        const dateKey = formatDateKey(selectedDate);
+                        if (dniowkaStorage[dateKey]) {
+                            currentDniowkaData = dniowkaStorage[dateKey];
+                        } else {
+                            currentDniowkaData = null;
+                        }
+                        renderTopInfo();
+                        renderUploadSection();
+                        renderFlightList();
+                    }
+                });
+            }
+        });
         
         // Try to load the saved dniówka for current selected date
         const selectedDate = currentDateSelection === 'today' ? getDate(0) : getDate(1);
@@ -2406,6 +3260,14 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('dniowkaStorage', JSON.stringify(dniowkaStorage));
     }
 
+    function isUserFlight(flight) {
+        if (!currentUser) return false;
+        const userName = currentUser.name.toLowerCase();
+        const userLastName = currentUser.name.split(' ').pop().toLowerCase();
+        const flightText = Object.values(flight).join(' ').toLowerCase();
+        return flightText.includes(userName) || flightText.includes(userLastName);
+    }
+
     function renderFlightList() {
         const container = document.getElementById('flight-list');
         if (!container) return;
@@ -2418,14 +3280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let flightsToShow = currentDniowkaData.flights;
         
         if (currentTab === 'mine' && currentUser) {
-            const userName = currentUser.name.toLowerCase();
-            const userLastName = currentUser.name.split(' ').pop().toLowerCase(); // Get last name only
-            
-            flightsToShow = currentDniowkaData.flights.filter(flight => {
-                // Check ALL flight fields for the user's name OR last name
-                const flightText = Object.values(flight).join(' ').toLowerCase();
-                return flightText.includes(userName) || flightText.includes(userLastName);
-            });
+            flightsToShow = currentDniowkaData.flights.filter(flight => isUserFlight(flight));
         }
         
         if (flightsToShow.length === 0) {
@@ -2436,12 +3291,15 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = flightsToShow.map((flight, index) => `
             <div class="flight-card" data-flight-index="${index}">
                 <div class="flight-card-header">
-                    <div class="flight-number">${flight.number} ${flight.direction ? '✈️ ' + flight.direction : ''}</div>
+                    <div class="flight-number">
+                        ${isUserFlight(flight) ? '<span class="user-flight-dot"></span>' : ''}
+                        ${flight.number} ${flight.direction ? '✈️ ' + flight.direction : ''}
+                    </div>
                     <div class="flight-time">${flight.time}</div>
                 </div>
                 <div class="flight-card-content">
-                    ${flight.checkin ? `<div class="flight-detail"><span class="flight-detail-label">Check-in:</span><span class="flight-detail-value">${flight.checkin}</span></div>` : ''}
-                    ${flight.boarding ? `<div class="flight-detail"><span class="flight-detail-label">Boarding:</span><span class="flight-detail-value">${flight.boarding}</span></div>` : ''}
+                    ${flight.checkin ? `<div class="flight-detail"><span class="flight-detail-label">Odprawa:</span><span class="flight-detail-value">${flight.checkin}</span></div>` : ''}
+                    ${flight.boarding ? `<div class="flight-detail"><span class="flight-detail-label">Boardowanie:</span><span class="flight-detail-value">${flight.boarding}</span></div>` : ''}
                     ${flight.care ? `<div class="flight-detail"><span class="flight-detail-label">Opieka:</span><span class="flight-detail-value">${flight.care}</span></div>` : ''}
                     ${flight.nrCki ? `<div class="flight-detail"><span class="flight-detail-label">NR CKI:</span><span class="flight-detail-value">${flight.nrCki}</span></div>` : ''}
                     ${flight.gate ? `<div class="flight-detail"><span class="flight-detail-label">NR GATE:</span><span class="flight-detail-value">${flight.gate}</span></div>` : ''}
@@ -2521,7 +3379,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (filteredOperational.length > 0) {
             html += `
                 <div class="info-banner mb-4">
-                    <p class="font-bold mb-2">Operational Times (ETD):</p>
+                    <p class="font-bold mb-2">Operational Times (STD):</p>
                     <ul class="space-y-2 text-sm">
                         ${filteredOperational.map(item => `
                             <li>
@@ -2580,6 +3438,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (action === 'ssr') {
             renderSSRCodes('');
             showView('view-ssr');
+            // Add search listener
+            const ssrSearchInput = document.getElementById('ssr-search-input');
+            if (ssrSearchInput) {
+                ssrSearchInput.value = '';
+                ssrSearchInput.addEventListener('input', (e) => {
+                    renderSSRCodes(e.target.value);
+                });
+            }
             return;
         }
 
