@@ -544,17 +544,17 @@ window.APP_DATA = {
                                     'stanowisko check-in, przy którym pasażer czeka,',
                                     'o potrzebie ambuliftu.'
                                 ]
+                            },
+                            {
+                                type: 'nested-accordion',
+                                title: 'Zdjęcie procedury',
+                                imageUrl: 'img/procedura.jpg'
                             }
                         ]
                     },
                     {
                         title: 'Obliczenia',
                         type: 'calculator'
-                    },
-                    {
-                        title: 'Procedura zdjęcie',
-                        type: 'image',
-                        imageUrl: 'img/procedura.jpg'
                     }
                 ]
             }

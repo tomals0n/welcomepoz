@@ -350,11 +350,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderNestedItems(items, options = {}) {
         const { numbered = false } = options;
+        let counter = 0;
+        let uniqueId = 0;
 
         return (items || []).map((rawItem, index) => {
+            if (rawItem && rawItem.type === 'nested-accordion') {
+                const id = `nested-acc-${++uniqueId}`;
+                return `
+                    <div class="nested-list-item nested-accordion-item">
+                        <div class="nested-list-content">
+                            <div class="accordion-item mb-3">
+                                <div class="accordion-header nested-accordion-header" data-nested-accordion="${id}">
+                                    <span>${rawItem.title}</span>
+                                    <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="accordion-content-inner" style="padding-top: 0.5rem; padding-left: 0;">
+                                        <img src="${rawItem.imageUrl}" alt="${rawItem.title}" class="prm-image">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
             const item = normalizeNestedItem(rawItem);
             const marker = numbered
-                ? `<span class="nested-list-marker numbered">${index + 1}.</span>`
+                ? `<span class="nested-list-marker numbered">${++counter}.</span>`
                 : `<span class="nested-list-marker bullet"></span>`;
 
             return `
@@ -530,6 +555,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
 
         container.querySelectorAll('.accordion-header').forEach(header => {
+            header.onclick = () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.accordion-icon');
+                if (content && icon) {
+                    content.classList.toggle('open');
+                    icon.classList.toggle('open');
+                }
+            };
+        });
+
+        // Nested accordion logic
+        container.querySelectorAll('.nested-accordion-header').forEach(header => {
             header.onclick = () => {
                 const content = header.nextElementSibling;
                 const icon = header.querySelector('.accordion-icon');

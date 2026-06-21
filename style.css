@@ -366,13 +366,16 @@ html, body {
     visibility: hidden;
     transition: opacity 0.5s ease-in;
     padding: 1.5rem;
+    padding-bottom: 4rem; /* Extra bottom padding to prevent cut-off */
     max-width: 600px; /* Phone optimized */
     margin: 0 auto;
-    min-height: 100vh;
+    height: 100%;
     width: 100%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .header-logo {
@@ -409,6 +412,7 @@ html, body {
     display: none;
     flex-direction: column;
     animation: fadeIn 0.4s ease-out forwards;
+    padding-bottom: 2rem;
 }
 
 .view.active {
@@ -757,7 +761,8 @@ html, body {
 }
 
 .accordion-content.open {
-    max-height: 2000px;
+    max-height: 10000px;
+    overflow: visible;
 }
 
 .accordion-content-inner {
@@ -789,6 +794,30 @@ html, body {
     gap: 0.75rem;
     align-items: flex-start;
     color: rgba(255,255,255,0.9);
+}
+
+.nested-accordion-item {
+    display: block;
+    padding-top: 0.75rem;
+    padding-bottom: 0.25rem;
+}
+
+.nested-accordion-item .accordion-header {
+    padding: 0.75rem 1rem;
+}
+
+.nested-accordion-item .accordion-item {
+    margin-bottom: 0;
+    overflow: visible;
+}
+
+.nested-accordion-item .accordion-item:last-child {
+    margin-bottom: 0;
+}
+
+.nested-accordion-item .accordion-content-inner {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .nested-list-item + .nested-list-item {
@@ -866,6 +895,7 @@ html, body {
     height: auto;
     border-radius: 0.75rem;
     display: block;
+    margin-bottom: 1rem;
 }
 
 .calculator-inputs {
