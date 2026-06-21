@@ -10,8 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const docsTrigger = document.getElementById('docs-trigger');
     const prmTrigger = document.getElementById('prm-trigger');
-    const prmManualTrigger = document.getElementById('prm-manual-trigger');
-    const prmElectricTrigger = document.getElementById('prm-electric-trigger');
+    const prmMenu = document.getElementById('prm-menu');
+    const prmBwContent = document.getElementById('prm-bw-content');
+    const prmManualContent = document.getElementById('prm-manual-content');
+    const prmElectricContent = document.getElementById('prm-electric-content');
     
     const airlinesTrigger = document.getElementById('airlines-trigger');
     const airlineList = document.getElementById('airline-list');
@@ -47,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ssrWizzCodes = appData.ssrWizzCodes || [];
     const operationalData = appData.operationalData || {};
     const airlineTiles = appData.airlineTiles || {};
+    const prmData = appData.prmData || {};
     
     let currentUser = null; // Will store the logged-in user object
     let originalPinScreen = null; // To restore pin screen on logout
@@ -288,12 +291,194 @@ document.addEventListener('DOMContentLoaded', () => {
             item.desc.toLowerCase().includes(filter.toLowerCase())
         );
 
-        ssrContainer.innerHTML = filtered.map(item => `
-            <div class="procedure-step flex justify-between items-start">
-                <span class="font-bold text-pink-300 min-w-[80px]">${item.code}</span>
-                <span class="text-sm text-white/80 flex-1 ml-4">${item.desc}</span>
+        if (filtered.length === 0) {
+            ssrContainer.innerHTML = `
+                <div class="procedure-step text-center py-10">
+                    <p class="text-white/40 italic">Brak wyników dla "${filter}"</p>
+                </div>
+            `;
+            return;
+        }
+
+        ssrContainer.innerHTML = filtered.map((item, idx) => `
+            <div class="accordion-item mb-3">
+                <div class="accordion-header" data-accordion="ssr-${idx}">
+                    <span>${item.code}</span>
+                    <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        ${renderNestedItems([
+                            {
+                                text: item.desc,
+                                subitems: Array.isArray(item.subitems) ? item.subitems : []
+                            }
+                        ])}
+                    </div>
+                </div>
             </div>
         `).join('');
+
+        ssrContainer.querySelectorAll('.accordion-header').forEach(header => {
+            header.onclick = () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.accordion-icon');
+                if (content && icon) {
+                    content.classList.toggle('open');
+                    icon.classList.toggle('open');
+                }
+            };
+        });
+    }
+
+    function normalizeNestedItem(item) {
+        if (typeof item === 'string') {
+            return { text: item, subitems: [] };
+        }
+
+        if (!item || typeof item !== 'object') {
+            return { text: '', subitems: [] };
+        }
+
+        return {
+            text: item.text || item.desc || '',
+            subitems: Array.isArray(item.subitems) ? item.subitems : []
+        };
+    }
+
+    function renderNestedItems(items, options = {}) {
+        const { numbered = false } = options;
+
+        return (items || []).map((rawItem, index) => {
+            const item = normalizeNestedItem(rawItem);
+            const marker = numbered
+                ? `<span class="nested-list-marker numbered">${index + 1}.</span>`
+                : `<span class="nested-list-marker bullet"></span>`;
+
+            return `
+                <div class="nested-list-item ${numbered ? 'numbered' : 'bulleted'}">
+                    ${marker}
+                    <div class="nested-list-content">
+                        ${item.text ? `<div class="nested-list-text">${item.text}</div>` : ''}
+                        ${item.subitems.length ? `
+                            <div class="nested-sublist">
+                                ${item.subitems.map(subitem => `
+                                    <div class="nested-subitem">
+                                        <span class="nested-subbullet"></span>
+                                        <span>${subitem}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderPRMMenu() {
+        if (!prmMenu) return;
+
+        const tiles = prmData.tiles || [];
+        prmMenu.innerHTML = tiles.map((tile, index) => {
+            if (tile.type === 'accordion') {
+                return `
+                    <div class="accordion-item mb-3 prm-menu-item">
+                        <div class="accordion-header prm-accordion-header" data-prm-accordion="${index}">
+                            <span>${tile.label}</span>
+                            <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-content-inner">
+                                ${renderNestedItems(tile.items || [])}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <button class="mini-card prm-nav-card" data-prm-target="${tile.target || ''}" data-prm-key="${tile.key || ''}">
+                    <span>${tile.label}</span>
+                </button>
+            `;
+        }).join('');
+
+        prmMenu.querySelectorAll('.prm-accordion-header').forEach(header => {
+            header.onclick = () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.accordion-icon');
+                if (content && icon) {
+                    content.classList.toggle('open');
+                    icon.classList.toggle('open');
+                }
+            };
+        });
+
+        prmMenu.querySelectorAll('[data-prm-target]').forEach(button => {
+            button.onclick = () => {
+                const target = button.getAttribute('data-prm-target');
+                const key = button.getAttribute('data-prm-key');
+                if (key) {
+                    renderPRMDetail(key);
+                }
+                if (target) showView(target);
+            };
+        });
+    }
+
+    function renderPRMDetail(key) {
+        const viewMap = {
+            bw: prmBwContent,
+            manual: prmManualContent,
+            electric: prmElectricContent
+        };
+
+        const container = viewMap[key];
+        if (!container) return;
+
+        const detail = (prmData.views && prmData.views[key]) || null;
+        const sections = detail && Array.isArray(detail.sections) ? detail.sections : [];
+
+        if (!sections.length) {
+            container.innerHTML = `
+                <div class="procedure-step text-center py-10">
+                    <p class="text-white/40 italic">Treść w przygotowaniu.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = sections.map((section, index) => `
+            <div class="accordion-item mb-3">
+                <div class="accordion-header" data-prm-detail="${key}-${index}">
+                    <span>${section.title}</span>
+                    <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        ${renderNestedItems(section.items || [], { numbered: true })}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        container.querySelectorAll('.accordion-header').forEach(header => {
+            header.onclick = () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.accordion-icon');
+                if (content && icon) {
+                    content.classList.toggle('open');
+                    icon.classList.toggle('open');
+                }
+            };
+        });
     }
 
     function renderDocs(filter = '') {
@@ -375,7 +560,10 @@ document.addEventListener('DOMContentLoaded', () => {
             searchInput.addEventListener('input', (e) => renderDocs(e.target.value));
         }
     });
-    prmTrigger.addEventListener('click', () => showView('view-prm'));
+    prmTrigger.addEventListener('click', () => {
+        renderPRMMenu();
+        showView('view-prm');
+    });
     airlinesTrigger.addEventListener('click', () => {
         showView('view-airlines');
         // Reset search input
@@ -403,10 +591,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
-
-    // PRM Sub-triggers
-    prmManualTrigger.addEventListener('click', () => showView('view-prm-manual'));
-    prmElectricTrigger.addEventListener('click', () => showView('view-prm-electric'));
 
     // Airline List Clicks
     airlineList.addEventListener('click', (e) => {

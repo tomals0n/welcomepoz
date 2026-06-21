@@ -339,6 +339,217 @@ window.APP_DATA = {
             { action: 'topic', topic: 'EXTRA SEAT', label: 'EXTRA SEAT' },
             { action: 'ssr', label: 'SSR' }
         ]
+    },
+    prmData: {
+        tiles: [
+            {
+                type: 'accordion',
+                label: 'SSR',
+                items: [
+                    {
+                        text: 'WCHR ~ na życzenie wózek inwalidzki podczas poruszania do samolotu',
+                        subitems: [
+                            'Nie jest wymagane usadzenie takiego pasażera pod oknem.'
+                        ]
+                    },
+                    {
+                        text: 'WCHC ~ wózek inwalidzki do momentu zajęcia miejsca w samolocie',
+                        subitems: [
+                            'Wymagane jest posadzenie takiego pasażera pod oknem.',
+                            'Ambulift.'
+                        ]
+                    },
+                    {
+                        text: 'WCHS ~ wózek inwalidzki do momentu zajęcia miejsca w samolocie',
+                        subitems: [
+                            'Wymagane jest posadzenie takiego pasażera pod oknem.',
+                            'Ambulift na życzenie.'
+                        ]
+                    },
+                    'BLDP ~ pasażer niewidomy lub słabowidzący, podróżujący samodzielnie bez osoby towarzyszącej, niewymagający asysty podczas przemieszczania się',
+                    'BDGR ~ pasażer niewidomy lub słabowidzący podróżujący z psem przewodnikiem, wymagający asysty',
+                    'BDGP ~ niewidomy lub słabowidzący z psem przewodnikiem, bez potrzeby asysty',
+                    'WCHP',
+                    'WCBW ~ wheelchair battery wet ~ bateria mokra',
+                    'WCBD ~ wheelchair battery dry ~ bateria sucha',
+                    'WCLB ~ wheelchair lithium battery ~ bateria litowo-jonowa',
+                    'WCMP ~ wheelchair manual power ~ zwykły wózek bez żadnej baterii'
+                ]
+            },
+            { type: 'view', label: 'B.W', target: 'view-prm-bw', key: 'bw' },
+            { type: 'view', label: 'W.M', target: 'view-prm-manual', key: 'manual' },
+            { type: 'view', label: 'W.E', target: 'view-prm-electric', key: 'electric' }
+        ],
+        views: {
+            bw: {
+                sections: [
+                    {
+                        title: 'Procedura odprawy pasażera', // bez wózka
+                        items: [
+                            'Wyszukaj rezerwację pasażera w systemie oraz zweryfikuj jego dokument tożsamości.',
+                            {
+                                text: 'Jeżeli w rezerwacji znajduje się SSR, należy mimo to dodatkowo zapytać pasażera o potrzebę asysty:',
+                                subitems: [
+                                    'czy będzie w stanie samodzielnie wejść na pokład samolotu,',
+                                    'jakiego rodzaju pomocy potrzebuje.'
+                                ]
+                            },
+                            'Jeżeli w systemie nie ma żadnego SSR, a pasażer sam zgłosi potrzebę asysty lub sami zauważymy, że pasażer może jej potrzebować, należy samodzielnie zaproponować pomoc i dopytać o jego potrzeby.',
+                            {
+                                text: 'W przypadku, gdy pasażer potrzebuje asysty, wołamy PRM przez radio, podajemy:',
+                                subitems: [
+                                    'gdzie leci pasażer,',
+                                    'jak jest oznaczony w systemie,',
+                                    'stanowisko check-in, przy którym pasażer czeka,',
+                                    'czy pasażer potrzebuje wózka portowego.'
+                                ]
+                            },
+                            'Kiedy PRM przyjdzie już po pasażera, pytamy czy SSR jest zgodny oraz czy miejsce, na którym siedzi, jest zgodne.',
+                            {
+                                text: 'Jeżeli w rezerwacji znajduje się SSR, należy mimo to dodatkowo zapytać pasażera o potrzebę asysty:',
+                                subitems: [
+                                    'czy będzie w stanie samodzielnie wejść na pokład samolotu,',
+                                    'jakiego rodzaju wsparcia potrzebuje,',
+                                    'czy potrzebuje pomocy od check-in, od gate', 
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            manual: {
+                sections: [
+                    {
+                        title: 'Procedura odprawy pasażera', // wózek manualny
+                        items: [
+                            'Wyszukaj rezerwację pasażera w systemie oraz zweryfikuj jego dokument tożsamości.',
+                            {
+                                text: 'Jeżeli w rezerwacji znajduje się SSR, należy mimo to dodatkowo zapytać pasażera o potrzebę asysty:',
+                                subitems: [
+                                    'czy będzie w stanie samodzielnie wejść na pokład samolotu,',
+                                    'jakiego rodzaju wsparcia potrzebuje,',
+                                    'czy potrzebuje pomocy od check-in, od gate.'
+                                ]
+                            },
+                            {
+                                text: 'Jeżeli widzimy, że pasażer przyjechał na wózku, pytamy:',
+                                subitems: [
+                                    'czy to jego wózek czy portowy,',
+                                    'jakiego rodzaju to jest wózek (manualny/elektryczny),',
+                                    'z ilu części się składa.'
+                                ]
+                            },
+                            'Mierzymy czy wózek zmieści się do samolotu.',
+                            'Wózek manualny oznaczamy przywieszką (przywieszek musi być tyle ile jest części), musi być dodany w systemie. Jeśli pasażer chce pojechać nim pod samolot, to dodatkowo przyklejamy przywieszkę "delivery at aircraft" i oznaczamy w systemie (FR-ITG/WIZZ-DAA). Dodatkowo dodajemy SSR - WCMP (wheelchair manual power ~ zwykły wózek bez żadnej baterii).',
+                            {
+                                text: 'Jeżeli pasażer potrzebuje pomocy od PRM, wołamy przez radio, podajemy:',
+                                subitems: [
+                                    'gdzie leci pasażer,',
+                                    'jak jest oznaczony w systemie,',
+                                    'stanowisko check-in, przy którym pasażer czeka,',
+                                    'czy pasażer potrzebuje wózka portowego czy ma swój,',
+                                    'potrzeba ambuliftu.'
+                                ]
+                            },
+                            'Kiedy PRM przyjdzie już po pasażera, pytamy czy SSR jest zgodny, czy miejsce na którym siedzi jest zgodne.',
+                            'Podczas wysyłania figurek na grupę koniecznie piszemy o tym jaki jest PRM na wylot i gdzie siedzi.'
+                        ]
+                    }
+                ]
+            },
+            electric: {
+                sections: [
+                    {
+                        title: 'Procedura odprawy pasażera', // wózek elektryczny
+                        items: [
+                            'Wyszukaj rezerwację pasażera w systemie oraz zweryfikuj jego dokument tożsamości.',
+                            {
+                                text: 'Jeżeli w rezerwacji znajduje się SSR, należy mimo to dodatkowo zapytać pasażera o potrzebę asysty:',
+                                subitems: [
+                                    'jakiego rodzaju wsparcia potrzebuje,',
+                                    'czy potrzebuje pomocy od check-in, od gate,',
+                                    'czy potrzebuje ambuliftu.'
+                                ]
+                            },
+                            {
+                                text: 'Jeżeli widzimy, że pasażer przyjechał na wózku, pytamy:',
+                                subitems: [
+                                    'jakiego rodzaju jest to wózek (manualny/elektryczny),',
+                                    'z ilu części się składa.'
+                                ]
+                            },
+                            {
+                                text: 'Jeśli wózek jest elektryczny, weryfikujemy:',
+                                subitems: [
+                                    'ile baterii posiada pasażer,',
+                                    'jaki jest typ baterii:',
+                                    'sucha,',
+                                    'mokra niewylewająca się,',
+                                    'mokra wylewająca się,',
+                                    'niklowo-metalowo-wodorkowa,',
+                                    'litowo-jonowa,',
+                                    'czy bateria jest wyciągalna, czy zamontowana na stałe.'
+                                ]
+                            },
+                            {
+                                text: 'Oznaczenia w systemie:',
+                                subitems: [
+                                    'WCBD – bateria sucha / mokra niewylewająca się / niklowo-metalowo-wodorkowa,',
+                                    'WCBW – bateria mokra wylewająca się,',
+                                    'WCLB – bateria litowo-jonowa.'
+                                ]
+                            },
+                            'Sprawdzamy, czy bateria może lecieć w kabinie pasażerskiej, czy musi zostać przewieziona w luku bagażowym (zgodnie z tabelą).',
+                            'Sprawdzamy pojemność baterii (do 300Wh).',
+                            'Wyjątek stanowi główna bateria litowo-jonowa przewożona w luku bagażowym, zamontowana w sposób uniemożliwiający jej uszkodzenie.',
+                            'Mierzymy wózek i sprawdzamy, czy ma odpowiednie wymiary.',
+                            {
+                                text: 'Wózek oznaczamy przywieszką:',
+                                subitems: [
+                                    'przywieszek musi być tyle, z ilu części składa się wózek,',
+                                    'jeśli pasażer chce korzystać z wózka aż do samolotu i nie chce skorzystać z portowego wózka, przyklejamy przywieszkę "Delivery at Aircraft",',
+                                    'oznaczamy w systemie:',
+                                    'FR – ITG,',
+                                    'WIZZ – DAA.'
+                                ]
+                            },
+                            {
+                                text: 'Dodatkowo dodajemy odpowiedni SSR:',
+                                subitems: [
+                                    'WCBD – Wheelchair Battery Dry,',
+                                    'WCBW – Wheelchair Battery Wet,',
+                                    'WCLB – Wheelchair Lithium Battery.'
+                                ]
+                            },
+                            {
+                                text: 'Przyklejamy specjalne niebieskie naklejki na wózek:',
+                                subitems: [
+                                    'jeśli bateria jest razem z wózkiem – naklejkę przyklejamy do baterii,',
+                                    'jeśli bateria jest oddzielnie – jedną część naklejki umieszczamy na baterii, a drugą na wózku.'
+                                ]
+                            },
+                            {
+                                text: 'Jeśli jest to WCBW, dodatkowo przyklejamy:',
+                                subitems: [
+                                    'naklejkę IATA 9.3C,',
+                                    'nalepkę DGR klasy 8,',
+                                    'naklejkę "This Side Up" (czarną lub czerwoną).'
+                                ]
+                            },
+                            {
+                                text: 'Wołamy PRM przez radio i podajemy:',
+                                subitems: [
+                                    'gdzie leci pasażer,',
+                                    'jak jest oznaczony w systemie,',
+                                    'stanowisko check-in, przy którym pasażer czeka,',
+                                    'o potrzebie ambuliftu.'
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
     }
 };
 
