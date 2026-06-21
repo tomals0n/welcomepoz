@@ -629,21 +629,22 @@ html, body {
     margin-bottom: 0;
 }
 
-.prm-accordion-header,
-.prm-nav-card {
-    min-height: 84px;
-}
 
 .prm-accordion-header::before,
 .prm-nav-card::before {
     border-radius: 1rem;
 }
 
-.prm-accordion-header span,
-.prm-nav-card span {
+.prm-accordion-header span {
     font-size: 1.6rem;
     font-weight: 700;
     letter-spacing: 0.08em;
+}
+
+.prm-nav-card span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
 }
 
 .prm-nav-card {
@@ -858,6 +859,43 @@ html, body {
     color: rgba(255,255,255,0.9);
     margin-bottom: 0.5rem;
     font-size: 0.98rem;
+}
+
+.prm-image {
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    display: block;
+}
+
+.calculator-inputs {
+    flex-wrap: wrap;
+}
+
+.calculator-input {
+    flex: 1;
+    min-width: 80px;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 182, 193, 0.3);
+    border-radius: 0.75rem;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    text-align: center;
+}
+
+.calculator-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.calculator-input:focus {
+    border-color: rgba(255, 182, 193, 0.8);
+}
+
+.calculator-input-readonly {
+    background: rgba(255, 182, 193, 0.15);
+    cursor: default;
 }
 
 .accordion-top-title {

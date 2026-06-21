@@ -376,9 +376,9 @@ window.APP_DATA = {
                     'WCMP ~ wheelchair manual power ~ zwykły wózek bez żadnej baterii'
                 ]
             },
-            { type: 'view', label: 'B.W', target: 'view-prm-bw', key: 'bw' },
-            { type: 'view', label: 'W.M', target: 'view-prm-manual', key: 'manual' },
-            { type: 'view', label: 'W.E', target: 'view-prm-electric', key: 'electric' }
+            { type: 'view', label: 'Bez wózka', target: 'view-prm-bw', key: 'bw' },
+            { type: 'view', label: 'Wózek manualny', target: 'view-prm-manual', key: 'manual' },
+            { type: 'view', label: 'Wózek elektryczny', target: 'view-prm-electric', key: 'electric' }
         ],
         views: {
             bw: {
@@ -546,6 +546,15 @@ window.APP_DATA = {
                                 ]
                             }
                         ]
+                    },
+                    {
+                        title: 'Obliczenia',
+                        type: 'calculator'
+                    },
+                    {
+                        title: 'Procedura zdjęcie',
+                        type: 'image',
+                        imageUrl: 'img/procedura.jpg'
                     }
                 ]
             }
