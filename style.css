@@ -820,6 +820,16 @@ html, body {
     padding-right: 0;
 }
 
+.calculator-section {
+    width: 100%;
+}
+
+.calculator-section h3,
+.calculator-section h4 {
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
 .nested-list-item + .nested-list-item {
     margin-top: 0.65rem;
 }

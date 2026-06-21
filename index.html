@@ -102,6 +102,12 @@
                     <span class="card-icon">♿</span>
                     <h3 class="card-title">PRM</h3>
                 </div>
+                
+                <!-- TILE 4: POWERBANKI -->
+                <div id="powerbanki-trigger" class="bento-card">
+                    <span class="card-icon">🔋</span>
+                    <h3 class="card-title">Powerbanki</h3>
+                </div>
             </div>
         </div>
 
@@ -158,6 +164,40 @@
             
             <h2 class="text-2xl font-bold mb-4">PRM</h2>
             <div id="prm-menu" class="prm-menu"></div>
+        </div>
+
+        <!-- POWERBANKI VIEW -->
+        <div id="view-powerbanki" class="view">
+            <div class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            
+            <h2 class="text-2xl font-bold mb-6">Powerbanki - Kalkulator</h2>
+            <div class="calculator-section mb-5">
+                <h3 class="text-white font-semibold mb-3">(mAh × V) ÷ 1000 = Wh</h3>
+                <div class="calculator-inputs flex gap-3 items-center mb-3">
+                    <input type="number" id="pb-calc-mah" placeholder="mAh" class="calculator-input">
+                    <span class="text-white">×</span>
+                    <input type="number" id="pb-calc-v1" placeholder="V" class="calculator-input">
+                    <span class="text-white">=</span>
+                    <input type="text" id="pb-calc-wh1" readonly placeholder="Wh" class="calculator-input calculator-input-readonly">
+                </div>
+            </div>
+            <div class="calculator-section">
+                <h3 class="text-white font-semibold mb-3">Ah × V = Wh</h3>
+                <div class="calculator-inputs flex gap-3 items-center">
+                    <input type="number" id="pb-calc-ah" placeholder="Ah" class="calculator-input">
+                    <span class="text-white">×</span>
+                    <input type="number" id="pb-calc-v2" placeholder="V" class="calculator-input">
+                    <span class="text-white">=</span>
+                    <input type="text" id="pb-calc-wh2" readonly placeholder="Wh" class="calculator-input calculator-input-readonly">
+                </div>
+            </div>
+            <div class="mt-6 text-white/70 text-sm">
+                <p>mAh = mili Amperogodzina</p>
+                <p>Wh = Watogodzina</p>
+                <p>V = Wolt</p>
+            </div>
         </div>
 
         <!-- PRM BW VIEW -->

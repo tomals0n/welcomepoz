@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const docsTrigger = document.getElementById('docs-trigger');
     const prmTrigger = document.getElementById('prm-trigger');
+    const powerbankiTrigger = document.getElementById('powerbanki-trigger');
     const prmMenu = document.getElementById('prm-menu');
     const prmBwContent = document.getElementById('prm-bw-content');
     const prmManualContent = document.getElementById('prm-manual-content');
@@ -496,47 +497,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             }
-            if (section.type === 'calculator') {
-                return `
-                    <div class="accordion-item mb-3">
-                        <div class="accordion-header" data-prm-detail="${key}-${index}">
-                            <span>${section.title}</span>
-                            <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </div>
-                        <div class="accordion-content">
-                            <div class="accordion-content-inner">
-                                <div class="calculator-section mb-4">
-                                    <h4 class="text-white font-semibold mb-2">(mAh × V) ÷ 1000 = Wh</h4>
-                                    <div class="calculator-inputs flex gap-2 items-center mb-2">
-                                        <input type="number" id="calc-mah" placeholder="mAh" class="calculator-input">
-                                        <span class="text-white">×</span>
-                                        <input type="number" id="calc-v1" placeholder="V" class="calculator-input">
-                                        <span class="text-white">=</span>
-                                        <input type="text" id="calc-wh1" readonly placeholder="Wh" class="calculator-input calculator-input-readonly">
-                                    </div>
-                                </div>
-                                <div class="calculator-section">
-                                    <h4 class="text-white font-semibold mb-2">Ah × V = Wh</h4>
-                                    <div class="calculator-inputs flex gap-2 items-center">
-                                        <input type="number" id="calc-ah" placeholder="Ah" class="calculator-input">
-                                        <span class="text-white">×</span>
-                                        <input type="number" id="calc-v2" placeholder="V" class="calculator-input">
-                                        <span class="text-white">=</span>
-                                        <input type="text" id="calc-wh2" readonly placeholder="Wh" class="calculator-input calculator-input-readonly">
-                                    </div>
-                                </div>
-                                <div class="mt-4 text-white/70 text-sm">
-                                    <p>mAh = mili Amperogodzina</p>
-                                    <p>Wh = Watogodzina</p>
-                                    <p>V = Wolt</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
             return `
                 <div class="accordion-item mb-3">
                     <div class="accordion-header" data-prm-detail="${key}-${index}">
@@ -576,33 +536,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
         });
-
-        // Calculator logic
-        const calcMah = container.querySelector('#calc-mah');
-        const calcV1 = container.querySelector('#calc-v1');
-        const calcWh1 = container.querySelector('#calc-wh1');
-        const calcAh = container.querySelector('#calc-ah');
-        const calcV2 = container.querySelector('#calc-v2');
-        const calcWh2 = container.querySelector('#calc-wh2');
-
-        const calculate1 = () => {
-            const mah = parseFloat(calcMah.value) || 0;
-            const v = parseFloat(calcV1.value) || 0;
-            const wh = (mah * v) / 1000;
-            calcWh1.value = wh ? wh.toFixed(2) : '';
-        };
-
-        const calculate2 = () => {
-            const ah = parseFloat(calcAh.value) || 0;
-            const v = parseFloat(calcV2.value) || 0;
-            const wh = ah * v;
-            calcWh2.value = wh ? wh.toFixed(2) : '';
-        };
-
-        if (calcMah) calcMah.addEventListener('input', calculate1);
-        if (calcV1) calcV1.addEventListener('input', calculate1);
-        if (calcAh) calcAh.addEventListener('input', calculate2);
-        if (calcV2) calcV2.addEventListener('input', calculate2);
     }
 
     function renderDocs(filter = '') {
@@ -687,6 +620,36 @@ document.addEventListener('DOMContentLoaded', () => {
     prmTrigger.addEventListener('click', () => {
         renderPRMMenu();
         showView('view-prm');
+    });
+    powerbankiTrigger.addEventListener('click', () => {
+        showView('view-powerbanki');
+        
+        // Powerbanki calculator logic
+        const calcMah = document.getElementById('pb-calc-mah');
+        const calcV1 = document.getElementById('pb-calc-v1');
+        const calcWh1 = document.getElementById('pb-calc-wh1');
+        const calcAh = document.getElementById('pb-calc-ah');
+        const calcV2 = document.getElementById('pb-calc-v2');
+        const calcWh2 = document.getElementById('pb-calc-wh2');
+
+        const calculate1 = () => {
+            const mah = parseFloat(calcMah.value) || 0;
+            const v = parseFloat(calcV1.value) || 0;
+            const wh = (mah * v) / 1000;
+            calcWh1.value = wh ? wh.toFixed(2) : '';
+        };
+
+        const calculate2 = () => {
+            const ah = parseFloat(calcAh.value) || 0;
+            const v = parseFloat(calcV2.value) || 0;
+            const wh = ah * v;
+            calcWh2.value = wh ? wh.toFixed(2) : '';
+        };
+
+        if (calcMah) calcMah.addEventListener('input', calculate1);
+        if (calcV1) calcV1.addEventListener('input', calculate1);
+        if (calcAh) calcAh.addEventListener('input', calculate2);
+        if (calcV2) calcV2.addEventListener('input', calculate2);
     });
     airlinesTrigger.addEventListener('click', () => {
         showView('view-airlines');

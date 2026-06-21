@@ -551,10 +551,6 @@ window.APP_DATA = {
                                 imageUrl: 'img/procedura.jpg'
                             }
                         ]
-                    },
-                    {
-                        title: 'Obliczenia',
-                        type: 'calculator'
                     }
                 ]
             }
