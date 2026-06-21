@@ -547,7 +547,7 @@ window.APP_DATA = {
                             },
                             {
                                 type: 'nested-accordion',
-                                title: 'Zdjęcie procedury',
+                                title: 'Załącznik',
                                 imageUrl: 'img/procedura.jpg'
                             }
                         ]
