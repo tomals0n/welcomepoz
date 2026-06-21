@@ -381,6 +381,30 @@ html, body {
     filter: drop-shadow(0 0 10px rgba(186, 46, 106, 0.3));
 }
 
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.header-user-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.55rem;
+    flex-shrink: 0;
+}
+
+.header-user-info {
+    text-align: right;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 140px;
+    word-break: break-word;
+}
+
 .view {
     display: none;
     flex-direction: column;
@@ -554,6 +578,39 @@ html, body {
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
+}
+
+.top-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.top-info-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0.9rem;
+    padding: 0.85rem 0.95rem;
+}
+
+.top-info-item-wide {
+    grid-column: 1 / -1;
+}
+
+.top-info-label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+}
+
+.top-info-value {
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 500;
+    word-break: break-word;
+    line-height: 1.5;
 }
 
 .sub-grid {
@@ -792,6 +849,7 @@ html, body {
 .flight-detail {
     display: flex;
     justify-content: space-between;
+    gap: 1rem;
     padding: 0.25rem 0;
     font-size: 0.9rem;
 }
@@ -802,6 +860,11 @@ html, body {
 
 .flight-detail-value {
     color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    text-align: right;
 }
 
 /* --- File upload --- */
@@ -858,9 +921,9 @@ html, body {
 
 .logout-btn {
     position: relative;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.04);
     display: flex;
     align-items: center;
@@ -875,7 +938,7 @@ html, body {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 50%;
+    border-radius: 12px;
     padding: 1px;
     background: linear-gradient(135deg, #2d1b69 0%, #ba2e6a 50%, #ffb6c1 100%);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -887,4 +950,23 @@ html, body {
 .logout-btn:active {
     transform: scale(0.95);
     background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 480px) {
+    .header-logo {
+        max-width: 200px;
+    }
+
+    .header-user-info {
+        max-width: 120px;
+        font-size: 0.82rem;
+    }
+
+    .top-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .top-info-item-wide {
+        grid-column: auto;
+    }
 }
